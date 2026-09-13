@@ -96,7 +96,7 @@ def run_managed(command, *, stdout, env, timeout, cleanup_timeout=10):
         if os.name == "nt":
             job = WindowsJob()
             command = [sys.executable, "-I", "-B", "-m", "fpl3._process_entry", *command]
-            process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=stdout, stderr=None,
+            process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=stdout, stderr=subprocess.STDOUT,
                                        env=env, creationflags=subprocess.CREATE_NO_WINDOW)
             # The gate cannot launch Conda (and hence a worker) before assignment succeeds.
             job.assign(process)
@@ -105,7 +105,7 @@ def run_managed(command, *, stdout, env, timeout, cleanup_timeout=10):
         else:
             if not Path("/proc").is_dir():
                 raise OSError("This worker launcher supports Windows and Linux only")
-            process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=stdout, stderr=None,
+            process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=stdout, stderr=subprocess.STDOUT,
                                        env=env, start_new_session=True)
         result.update(pid=process.pid, tree_quiescent=False)
         result["returncode"] = process.wait(timeout=timeout)

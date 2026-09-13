@@ -43,7 +43,7 @@ Configure IDEs to use `.conda/dev/python.exe` with Miniconda's Conda executable.
 Direct interpreter invocation may omit DLL search-path activation on Windows;
 use the supplied wrappers for reproducible numerical execution.
 
-`test.ps1` ran 65 synthetic tests and Ruff successfully. Tests need neither SD300,
+`test.ps1` runs the synthetic suite and Ruff. Tests need neither SD300,
 models nor network. `doctor` reports interpreter, package paths, versions and
 isolation without inference or network. With local configuration it also launches
 a P1 worker to inspect that environment separately:
@@ -140,3 +140,55 @@ bytes were obtained, no TensorFlow profile was installed, and neither loading no
 inference was verified. A future authorized task requires accessible weights with
 known provenance before compatible worker selection and synthetic checks. No new
 Dahia route or two-pair smoke is authorized here.
+
+## Step 02 supervisor evaluation
+
+`supervisor-p1` has prepare, run and report phases. The historical `run-p1` and
+`verify-migration` commands retain their original 100-image/250-pair purpose.
+Use a separate private local configuration for the new cache; numerical route
+parameters and existing Conda prefixes remain unchanged.
+
+The private specification follows `configs/supervisor.example.json`. Its selected
+evaluation metadata contains `cohort_sha256`, `sources` (path, SHA-256 and fields
+read), and `records`. Each record carries string `subject_id`, `impression`,
+anatomical `position`, `release`, `image_id`, `relative_path`, source `sha256`,
+`width`, `height`, `source_ppi` and `processing_ppi`. The first source is the
+original SD300B image catalog. Source geometry may be imported from recorded
+original-input metadata; transformed images or scores are not calibration inputs.
+The preparation verifies source metadata hashes and every selected anatomical
+slot. It uses the imported cohort, never a new subject selection.
+
+The following are command forms; substitute private files and new output names:
+
+```powershell
+.\scripts\fpl3.ps1 supervisor-p1 prepare --local workspace\supervisor.local.json --specification workspace\supervisor.specification.json --out workspace\supervisor-freeze-new
+.\scripts\fpl3.ps1 supervisor-p1 run --local workspace\supervisor.local.json --prepared workspace\supervisor-freeze-new --role development --out workspace\runs\supervisor-dev-new
+.\scripts\fpl3.ps1 supervisor-p1 run --local workspace\supervisor.local.json --prepared workspace\supervisor-freeze-new --role evaluation --development-run workspace\runs\supervisor-dev-new --out workspace\runs\supervisor-evaluation-new
+.\scripts\fpl3.ps1 supervisor-p1 report --local workspace\supervisor.local.json --prepared workspace\supervisor-freeze-new --run workspace\runs\supervisor-evaluation-new --out workspace\supervisor-report-new
+```
+
+Preparation consumes the approved original P1 development evidence and the
+Step 01 closure binding. It selects the lowest defined candidate boundary with
+at most 2 false acceptances among all 200 development impostors, preserving ties.
+It freezes that policy, route, components, numerical identity, code, both
+manifests and primary demonstration IDs. Evaluation image access begins only
+after this freeze and the new development protocol check. No sweep or threshold
+adjustment on evaluation is supported.
+
+The 50-subject evaluation uses 1,000 native source images, 2,000 independent
+extractions (a/b per source) and 2,000 matcher comparisons. Four workers at most
+process ten disjoint anatomical-finger partitions, each containing all subjects.
+Every worker still uses CPU and four Torch threads. Partition logs capture both
+output streams. The coordinator reassembles original pair order and records
+source hashes/geometry before and after execution. Worker and wall timings are
+reported separately; filtered views incur no additional matching.
+
+The aggregate `approval.json` and ten v3 partition assessments govern use;
+`complete.json` is only an inventory. Filesystem, source-binding, cache, process
+or acknowledgement faults block approval. Explicit biometric processing failures
+remain results and do not become threshold rejections. The new CLI exits with
+code 2 if approval is denied, independently of match percentages. A report phase
+rechecks original evidence without inference and exports Markdown, eligibility,
+an opaque CSV and a validation receipt. The private review additionally contains
+the verified Excel workbook and a local image demonstration; neither belongs in
+public Git. See the [Step 02 report](step02-supervisor.md).

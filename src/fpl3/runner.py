@@ -49,11 +49,21 @@ def check_p1_via_worker(local_path, output):
 
 def run_p1(local_path, run_dir, fresh=False):
     """Modern coordinator: validate protocol, dispatch opaque job, seal evidence."""
+    local = read_local(local_path)
+    inputs, pairs, receipt = load_import(local["import_dir"])
+    return run_bound_p1(local_path, run_dir, inputs, pairs, receipt, fresh=fresh)
+
+
+def run_bound_p1(local_path, run_dir, inputs, pairs, receipt, *, fresh=True, experiment=None):
+    """Execute caller-validated opaque pairs with the same v3 evidence contract.
+
+    Protocol/decision bindings belong to the coordinator identity, never the job.
+    The historical migration entry point above retains its frozen 250-pair plan.
+    """
     from .runtime import doctor
     started = time.perf_counter()
     local = read_local(local_path)
     config = read_json(local["route_config"])
-    inputs, pairs, receipt = load_import(local["import_dir"])
     reference = read_json(Path(local["import_dir"]) / "reference/settings.json")
     historical = {**reference["P1"], **{k: reference["shared_descriptor_matcher"][k]
                   for k in ("sift_scale", "median_blur", "clahe_clip", "ratio_threshold_on_squared_distance")}}
@@ -66,8 +76,11 @@ def run_p1(local_path, run_dir, fresh=False):
         raise ValueError("Development coordinator must run in its isolated Conda environment")
     if Path(sys.prefix).resolve() != Path(local["dev_prefix"]).resolve():
         raise ValueError("Use the configured development interpreter to coordinate a run")
-    out = Path(run_dir).resolve()
+    # Resolve an existing directory. Concurrent creation of missing ancestors can
+    # otherwise make Windows realpath retain an inconsistent extended-path prefix.
+    out = Path(run_dir).absolute()
     out.mkdir(parents=True, exist_ok=False)
+    out = out.resolve(strict=True)
     write_json(out / "environment.json", environment)
     components = read_json(Path(local["third_party"]) / "components.json")
     if digest(Path(local["third_party"]) / "components.json") != receipt["components_sha256"]:
@@ -95,6 +108,8 @@ def run_p1(local_path, run_dir, fresh=False):
                 "local_config_sha256": digest(local_path), "signature": signature,
                 "coordinator_environment": environment, "worker_protocol": SCHEMA,
                 "code_identity": "executed file bytes, no new Git commit"}
+    if experiment is not None:
+        identity["experiment"] = experiment
     write_json(out / "identity.json", identity)
     job = {"inputs": inputs, "pairs": pairs, "config": config, "components": components,
            "artifacts": local["third_party"], "cache_dir": local["cache_dir"], "run_dir": str(out),

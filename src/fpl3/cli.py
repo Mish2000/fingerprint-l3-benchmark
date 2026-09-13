@@ -29,6 +29,15 @@ def main(argv=None):
     dahia.add_argument("--source", required=True)
     dahia.add_argument("--out", required=True)
     dahia.add_argument("--network", action="store_true")
+    supervisor = sub.add_parser("supervisor-p1", help="Frozen Step 02 P1 protocol; no threshold tuning on evaluation")
+    supervisor.add_argument("phase", choices=("prepare", "run", "report"))
+    supervisor.add_argument("--local", required=True)
+    supervisor.add_argument("--out", required=True)
+    supervisor.add_argument("--specification")
+    supervisor.add_argument("--prepared")
+    supervisor.add_argument("--role", choices=("development", "evaluation"))
+    supervisor.add_argument("--development-run")
+    supervisor.add_argument("--run")
     args = parser.parse_args(argv)
     if args.action == "doctor":
         from .runtime import doctor
@@ -52,6 +61,21 @@ def main(argv=None):
     elif args.action == "check-p1-numerics":
         from .runner import check_p1_via_worker
         result = check_p1_via_worker(args.local, args.out)
+    elif args.action == "supervisor-p1":
+        from .supervisor import prepare, run_supervisor
+        if args.phase == "prepare":
+            if not args.specification:
+                parser.error("prepare requires --specification")
+            result = prepare(args.local, args.specification, args.out)
+        elif args.phase == "run":
+            if not args.prepared or not args.role:
+                parser.error("run requires --prepared and --role")
+            result = run_supervisor(args.prepared, args.local, args.role, args.out, args.development_run)
+        else:
+            from .supervisor_report import write_report
+            if not args.prepared or not args.run:
+                parser.error("report requires --prepared and --run")
+            result = write_report(args.prepared, args.local, args.run, args.out)
     else:
         from .dahia import check_artifacts
         result = check_artifacts(args.source, args.out, args.network)
@@ -59,5 +83,7 @@ def main(argv=None):
     if args.action == "run-p1" and (result.get("run_status") != "success" or result["success"] != result["planned"]):
         return 2
     if args.action == "verify-migration" and not result["approved"]:
+        return 2
+    if args.action == "supervisor-p1" and args.phase != "prepare" and not result["approved"]:
         return 2
     return 0

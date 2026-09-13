@@ -1,7 +1,8 @@
 # Research context and boundaries
 
-The Conda migration changes execution infrastructure only. The frozen protocol,
-source-resolution rules and research limits below remain in force. Interpreter
+The Conda migration changed execution infrastructure only. Step 02 adds the fixed
+supervisor reporting protocol on P1 and the existing 50-subject SD300B cohort,
+while preserving historical development and migration evidence. Interpreter
 decisions live in [environment policy](environment-policy.md); current verified
 outcomes live in [status](status.md).
 
@@ -30,7 +31,7 @@ SD300 consists of scanned ink fingerprint cards. Image artifacts, scanner
 properties and ink marks limit anatomical interpretation and generalization.
 SD300B and SD300C are related scans of the same cards, not independent subject
 populations. SD300C header/resolution anomalies remain a later ingestion concern;
-Step 01 does not open or implement its image route.
+Neither Step 01 nor Step 02 opens or implements its image route.
 
 The fixed development sample has five subjects, ten fingers per subject, and
 one PLAIN plus one ROLL image per finger: 100 images and 250 directed pairs.
@@ -38,14 +39,24 @@ PLAIN FRGP 11 maps to the right thumb and 12 to the left thumb. Multi-finger
 images are excluded. Pairs are validated from anatomical metadata, never by
 filename string substitution.
 
-The protected 50-subject cohort is checked using metadata only. The old
+The existing 50-subject cohort was metadata-only in Step 01. Step 02 authorizes
+its SD300B P1 evaluation after freezing the development threshold, route, code
+and protocol, and completing the new-protocol development check. It remains
+evaluation data, with no training or threshold/model tuning on those subjects.
+The five development and fifty evaluation subjects do not overlap. The old
 experiment's known exposure record is retained privately, including prior
 exposure within that protected cohort; moving repositories does not reset it.
-No protected images or scores are opened in Step 01.
+No protected images or scores were opened in Step 01.
 
 Synthetic geometry tests establish implementation behavior. A two-pair smoke
 would establish that a chain runs. Exact migration establishes preservation of
 the earlier experiment. None of these establishes biometric accuracy, advantage
 over another method, SOTA performance or generalization to another population.
-No score-based pair filtering, threshold search, training, P2 repair, SD300C run,
-DP/PoreNet integration or expanded benchmark is authorized in this step.
+Step 02 reports all 500 genuine pairs and a SELF-eligible view of those same
+scores. It reports the 500 cyclic next-subject, same-finger negatives both ALL
+and with both units SELF-eligible, without rebuilding the ring. Two independent
+extractions of the same source support SELF, not independence of acquisitions.
+The threshold is the lowest defined unique-score/above-maximum candidate meeting
+FA <= 2 on the 200 original development impostors. This is experimental policy
+fitting, not a population risk guarantee. No evaluation threshold sweep, training,
+P2 repair, SD300C run, DP/PoreNet or further population expansion is authorized.

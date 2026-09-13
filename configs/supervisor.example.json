@@ -1,0 +1,10 @@
+{
+  "evaluation_metadata": "<private-review>/evaluation-metadata.json",
+  "development_run": "<private-runs>/approved-original-p1-development",
+  "closure_summary": "<private-review>/step01-closure/migration_summary.json",
+  "data_root": "<dataset-root>/NIST",
+  "parallel_workers": 4,
+  "source_baseline": "<reviewed-source-revision>",
+  "brief": "<private-instructions>/step02-supervisor.md",
+  "synthetic_validation": "<private-review>/synthetic-tests.xml"
+}

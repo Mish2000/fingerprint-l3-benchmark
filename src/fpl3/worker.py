@@ -67,12 +67,13 @@ def run_features(payload):
         image = Image(**{**item, "path": Path(item["path"])})
         record = {"key": image.key, "status": "blocked" if error else "failure", "reason": error,
                   "failure_stage": "setup" if error else None, "timings": {}, "cache_hit": False}
-        stage = "input"
+        stage = "source_binding"
         mark = time.perf_counter()
         try:
             if not error:
                 if digest(image.path) != image.sha256:
                     raise ValueError("Input digest changed")
+                stage = "input"
                 pixels = cv2.imread(str(image.path), cv2.IMREAD_GRAYSCALE)
                 if pixels is None or pixels.shape != (image.height, image.width) or str(pixels.dtype) != "uint8":
                     raise ValueError("Expected unchanged native gray8 geometry")
@@ -103,11 +104,13 @@ def run_features(payload):
                               points=len(points.xy), descriptors=len(described.values),
                               npz_sha256=digest(out / "templates" / f"{image.key}.npz"))
         except Exception as exc:
-            record.update(status="failure", reason=f"{type(exc).__name__}: {exc}", failure_stage=stage)
+            infrastructure = isinstance(exc, OSError) or stage in {"source_binding", "cache", "cache_write"}
+            record.update(status="failure", reason=f"{type(exc).__name__}: {exc}", failure_stage=stage,
+                          failure_category="infrastructure" if infrastructure else "processing")
             record["timings"]["failed_stage_seconds"] = time.perf_counter() - mark
         extraction[image.key] = record
         write_json(out / "templates" / f"{image.key}.json", record)
-        print(f"image {i + 1}/100 {record['status']}", file=sys.stderr, flush=True)
+        print(f"image {i + 1}/{len(inputs)} {record['status']}", file=sys.stderr, flush=True)
     results = execute_pairs(pairs, templates, extraction, matcher, error)
     write_json(out / "pairs.json", results)
     summary = {**coverage(results), "images": len(inputs),

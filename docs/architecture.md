@@ -14,8 +14,9 @@ Development coordinator ← run sealing ┘
 ```
 
 `protocol.py` validates imported development metadata and frozen pair order.
-The importer is the only module reading the previous project's artifacts; it
-never imports or executes that package. `inputs.json` and `pairs.json` expose
+The importer reads the previous project's artifacts and never imports or executes
+that package. Step 02 additionally consumes a selected metadata export, bound to
+the original catalog and source-geometry metadata. `inputs.json` and `pairs.json` expose
 opaque keys. Truth and subject identifiers stay in the reference protocol.
 
 `runner.py` validates configuration, snapshots source and dispatches a P1 job.
@@ -71,7 +72,7 @@ hashes. Fresh inference bypasses reuse and preserves arrays before cache checks.
 `verification.py` compares arrays, statuses and scores with the reference without
 running a model or adjusting scores. `run_state.py` separately checks the seal,
 reference/source bindings, coordinator status, request/response, recorded coverage,
-image metadata, worker summary and code/process evidence. `approved` requires both
+image metadata, worker summary and code/process evidence. Migration approval requires both
 valid run evidence and exact fresh-extraction parity. `parity=exact` can remain a
 diagnostic on a rejected run. The CLI then exits with code 2.
 NPZ container hashes establish integrity; array equality establishes parity.
@@ -114,3 +115,36 @@ Consistent evidence can return `passed_legacy_evidence`; absence of historical
 worker code attestation, final source-drift checks and explicit process-tree exit
 records is reported as a legacy limitation. These guarantees are not invented
 retroactively or inferred from today's checkout or interpreter versions.
+
+## Supervisor protocol
+
+`supervisor_protocol.py` owns the ordered subjects, native SD300B anatomical slots,
+four pair populations, threshold candidate rule and SELF views. It never opens
+images or invokes a model. New pair/protocol IDs describe cyclic next-subject
+semantics. Negative endpoints retain the same anatomical finger and distinct
+subjects. Missing slots block preparation; subjects and pairs are never replaced
+after observing results.
+
+`supervisor.py` verifies the approved Step 01 development source and freezes the
+200-impostor decision profile, code, route, components, numerical environment,
+manifests and primary demonstration selections before evaluation. Evaluation also
+requires a completed new-protocol development check. Each source receives two
+opaque keys for independently invoked extraction. Only SELF uses side b;
+genuine and negative pairs reuse side a within the same worker. The worker's
+strict allowlist excludes subjects, truth, thresholds and decisions.
+
+Ten disjoint partitions, one per anatomical finger and each containing every
+subject, use the existing v3 coordinator through `run_bound_p1`. At most four
+workers run concurrently, each retaining P1's four CPU Torch threads. Sources,
+extractions, pairs and wraparound edges are not duplicated. Every partition must
+pass source/code/runtime, acknowledgement, output and Job quiescence checks. The
+aggregate restores global pair order and checks source bytes and geometry before
+and after execution.
+
+Supervisor approval requires complete valid evidence, including explicit
+processing failures. It requires neither legacy score parity nor a percentage of
+matches. Infrastructure gaps prevent a complete report. `supervisor_report.py`
+revalidates the run read-only before exporting six sections and an opaque table.
+ALL and SELF-FILTERED are views of the same scores. Negative filtering checks both
+units on the fixed ring and never finds a replacement survivor. Decisions and
+eligibility never flow back into biometric components.

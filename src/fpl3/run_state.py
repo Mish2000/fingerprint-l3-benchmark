@@ -42,6 +42,8 @@ def observe_outputs(run, inputs, pairs, summary_name="worker-summary.json"):
             problems.append(f"Image record missing or invalid: {item['key']}")
             continue
         images.append(record)
+        if record.get("failure_category") == "infrastructure":
+            problems.append(f"Image infrastructure failure: {item['key']}")
         if record["status"] == "success":
             payload = run / "templates" / f"{item['key']}.npz"
             if not payload.is_file() or record.get("npz_sha256") != digest(payload):

@@ -43,6 +43,16 @@ defect; regression tests assert the corrected approval contract, without preserv
 the defective behavior. Legacy missing code attestations remain explicit in the
 [closure report](step01-closure.md).
 
+Step 02 uses the earlier project's anatomical pair-generation and SELF-filtering
+logic as reference material, read locally at the supplied source revision
+`fd3e9b1a50c47e182ece70c991204c9246ce65fc`. The new implementation creates cyclic
+next-subject/same-finger negatives, with new pair identities, instead of the old
+same-subject/finger-shift experiment. The old package is not an execution engine.
+The supplied replacement specification distinguishes reported supervisor messages
+from the user's/current implementation decisions. It does not establish supervisor
+endorsement of the local P1 composition. The Windows path correction changes
+filesystem handling at the adapter boundary without changing numerical processing.
+
 ## Separate terms
 
 - Survey code: the local `LICENSE` was checked and copied with the closure. It
@@ -62,5 +72,7 @@ the defective behavior. Legacy missing code attestations remain explicit in the
 
 Full license files stay beside the local third-party code. Private evidence,
 templates, images, weights and per-pair scores are excluded from public source.
-The review export contains only the report, aggregate summaries and opaque pair
-comparison. No fingerprint screenshot is needed in the README.
+Public exports contain filtered aggregate summaries only. The separately labeled
+private review ZIP additionally contains the opaque individual pair table, with
+no images, templates or weights. The local HTML demonstration remains private.
+No fingerprint screenshot is included in the README.

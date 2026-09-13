@@ -7,6 +7,7 @@ Survey/Dahia algorithms remain in their attributed, ignored source closures.
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 import types
 from pathlib import Path
@@ -93,7 +94,7 @@ class SurveyF40:
         prediction = tiled_survey(self.model, pixels, p["output_tile"])
         scratch.mkdir(parents=True, exist_ok=False)
         self.entire.apply_nms(prediction, p["nms_probability"], p["window"], p["nms_iou"],
-                              str(scratch) + "/", 0, str(scratch) + "/", p["window"])
+                              str(scratch) + os.sep, 0, str(scratch) + os.sep, p["window"])
         rows = [tuple(map(int, line.split(","))) for line in (scratch / "0.txt").read_text().splitlines()]
         return Points(image.key, np.asarray(survey_xy(rows), dtype=np.float32).reshape(-1, 2))
 

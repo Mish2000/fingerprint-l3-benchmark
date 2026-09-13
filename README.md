@@ -14,38 +14,35 @@ Two native gray8 images (1000 PPI)
 
 ## Current verified state
 
-Development uses **Miniconda with Python 3.13.15**. P1 runs in a separate Conda
-worker with Python 3.10.21 and its historical numerical dependencies. A versioned
-JSON process interface lets the main project and model environments evolve
-separately. The [environment policy](docs/environment-policy.md) explains the
-version choice, exact package locks and upgrade procedure.
+Step 02 is complete: **50 existing evaluation subjects, 1,000 native SD300B
+images and 2,000 P1 comparisons** passed evidence validation. The fixed decision
+rule was selected beforehand from the 200 approved development impostor scores.
+The [six-section supervisor report](docs/step02-supervisor.md) presents SELF,
+metadata joins, genuine matching and cyclic next-subject matching, each with its
+required ALL/SELF-FILTERED view and explicit denominator.
 
-On **2026-09-13**, fresh P1 execution through the Conda environments reproduced
-all **133,502 points, 100 descriptor arrays and 250 scores/statuses exactly**,
-including three valid zeros. The same 100 development images and 250 pairs were
-used; all features were extracted anew. The Step 01 closure correction adds explicit
-run approval, process-tree termination and code identity checks. **65 synthetic
-tests** and Ruff passed; the earlier model geometry evidence is preserved.
+At that fixed threshold, genuine ALL matched **282/500**,
+and next-subject ALL produced **50/500 false acceptances**.
+The report separates these results from processing failures, development data
+and population-risk claims. It distinguishes supervisor-source statements from
+current implementation choices.
 
-The original P1 run was revalidated **read-only**, with exact numerical parity and
-consistent coordinator/worker acknowledgements, coverage and source bindings.
-The result is `passed_legacy_evidence`: v2 did not record worker source checks at
-both ends of execution. That historical limit remains explicit. New v3 runs record
-those checks. See the [closure report](docs/step01-closure.md).
+Development uses Conda Python **3.13.15**; P1 uses a separate Conda Python
+**3.10.21** worker with unchanged numerical dependencies, CPU and four Torch
+threads. New runs require before/after source checks, complete acknowledgements,
+validated outputs and confirmed process-tree termination. **83 synthetic tests
+and Ruff passed.** See [environment policy](docs/environment-policy.md).
 
-The Dahia CNN detector and descriptor remain **access-blocked**: their public
-endpoints returned sign-in HTML or HTTP 401. Neither weight was obtained, loaded
-or run. See the single detailed [candidate status](docs/status.md), the original
-`workspace/review-step01/` evidence and the current
-`workspace/review-step01-closure/readout_he.md`. These detailed research records
-remain private; [candidate status](docs/status.md) provides the public aggregate
-results. Source publication preserves the original execution snapshots and does
-not reassign those historical runs to a new commit.
+[Step 01 closure](docs/step01-closure.md) remains intact, including exact
+100-image/250-pair migration parity and the original v2 attestation limitations.
+Its scientific snapshots were preserved. Dahia weights remain access-blocked;
+DP/PoreNet and P2 were not started. The single detailed
+[candidate table](docs/status.md) records current verification.
 
-`AGENTS.md` is maintained locally and intentionally excluded from publication.
-Coding agents start at the project root and read it for the current brief, data
-boundaries and evidence locations. Public documentation provides the filtered
-review context; a missing public AGENTS file is expected.
+Research images, templates, models, individual scores and the detailed Hebrew
+review remain private under ignored `workspace/`. Public reports are filtered
+aggregates. Local `AGENTS.md` provides current agent context and is intentionally
+excluded from publication.
 
 ## Quickstart
 
@@ -96,9 +93,10 @@ user's earlier P1 experiment and does not claim a new biometric algorithm.
 
 Migration results do not establish biometric accuracy, comparative superiority
 or anatomical confirmation of predicted pores. SD300 contains scanned ink cards;
-SD300B/C are related scans. Protected-cohort images and scores were not opened,
-and historical exposure records were retained. Step 01 and the environment
-migration are complete; new research routes remain outside this task.
+SD300B/C are related scans. Step 02 evaluated only the explicitly authorized
+fixed SD300B cohort after freezing its development decision policy. Historical
+exposure remains recorded. Further methods, training and resolutions remain
+outside this completed task.
 
 Code, weights and data have separate terms. Survey code carries MIT; the Dahia
 mirror carries CC BY-NC-SA 4.0. No blanket license was assigned to this combined
