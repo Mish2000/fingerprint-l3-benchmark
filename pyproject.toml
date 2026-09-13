@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fpl3"
+version = "0.2.0"
+description = "Independent high-resolution Level-3 fingerprint research routes"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26,<3"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+dev = ["pytest>=8,<10", "ruff>=0.14,<1"]
+
+[project.scripts]
+fpl3 = "fpl3.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py313"
+line-length = 120
+
+[tool.ruff.per-file-target-version]
+"src/fpl3/{__init__,worker,worker_protocol,results,io,contracts,cache,biometrics,numerical,runtime}.py" = "py310"
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]

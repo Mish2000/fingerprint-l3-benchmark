@@ -1,0 +1,15 @@
+{
+  "route_id": "ASM-F40-SIFT-SPATIAL",
+  "historical_alias": "P1",
+  "detector": "survey_f40",
+  "descriptor": "dahia_sift",
+  "matcher": "dahia_spatial",
+  "parameters": {
+    "device": "cpu", "features": 40, "input_overlap": 16,
+    "nms_iou": 0.2, "nms_probability": 0.65, "output_tile": 256,
+    "torch_threads": 4, "window": 17,
+    "sift_scale": 4, "median_blur": 3, "clahe_clip": 3,
+    "ratio_threshold_on_squared_distance": 0.7
+  },
+  "parity_policy": {"mode": "exact", "atol": 0, "rtol": 0}
+}

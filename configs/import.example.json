@@ -1,0 +1,8 @@
+{
+  "historical_run": "<previous-root>/workspace/l3-bridge-v1/first-five",
+  "historical_workspace": "<previous-root>/workspace",
+  "historical_repository": "<previous-root>",
+  "data_root": "<dataset-root>/NIST",
+  "survey_dir": "<verified-existing-survey-checkout>",
+  "dahia_dir": "<verified-existing-dahia-mirror-checkout>"
+}

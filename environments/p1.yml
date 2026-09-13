@@ -1,0 +1,8 @@
+# P1 reproduction worker: preserve its verified historical numerical stack.
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.10.21
+  - pip=26.2.1
+  - setuptools=79.0.1

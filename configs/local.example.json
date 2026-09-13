@@ -1,0 +1,10 @@
+{
+  "schema": "fpl3-local-v2",
+  "conda_executable": "<miniconda-root>/Scripts/conda.exe",
+  "dev_prefix": "<project-root>/.conda/dev",
+  "workers": {"p1": {"prefix": "<project-root>/.conda/p1", "timeout_seconds": 1800}},
+  "import_dir": "<new-project-root>/workspace/imports/p1",
+  "third_party": "<new-project-root>/workspace/third_party",
+  "cache_dir": "<new-project-root>/workspace/cache-p1",
+  "route_config": "<new-project-root>/configs/p1.json"
+}

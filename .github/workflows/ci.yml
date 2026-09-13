@@ -25,3 +25,35 @@ jobs:
           persist-credentials: false
       - name: Check commit whitespace
         run: git diff-tree --check --root -r HEAD
+
+  synthetic-tests:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167 # v3
+        with:
+          activate-environment: ""
+          auto-activate-base: false
+          channels: conda-forge
+          channel-priority: strict
+      - name: Recreate the locked development environment
+        run: |
+          . ./scripts/common.ps1
+          $taskConda = (Get-Command conda.exe).Source
+          $taskPrefix = Join-Path $env:GITHUB_WORKSPACE '.conda/dev'
+          Invoke-Fpl3Checked $taskConda @('create', '--yes', '--override-channels',
+            '--channel', 'conda-forge', '--strict-channel-priority',
+            '--prefix', $taskPrefix, '--file', 'environments/locks/dev-win-64.explicit.txt')
+          Invoke-Fpl3Checked $taskConda @('run', '--no-capture-output', '--prefix',
+            $taskPrefix, 'python', '-I', '-m', 'pip', 'install', '--no-deps', '-e', '.')
+          Invoke-Fpl3Checked $taskConda @('run', '--no-capture-output', '--prefix',
+            $taskPrefix, 'python', '-I', '-m', 'pip', 'check')
+      - name: Run synthetic tests and Ruff
+        run: ./scripts/test.ps1 -CondaExe (Get-Command conda.exe).Source

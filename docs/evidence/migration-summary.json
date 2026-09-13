@@ -1,0 +1,44 @@
+{
+  "aggregate_results": {
+    "array_max_absolute_difference": {
+      "descriptors": 0,
+      "points": 0,
+      "retained_points": 0
+    },
+    "biometric_accuracy_claim": false,
+    "descriptors_exact_images": 100,
+    "images": 100,
+    "input_and_pair_order_identity_roles": "exact",
+    "new_total_points": 133502,
+    "new_zero_scores": 3,
+    "old_total_points": 133502,
+    "old_zero_scores": 3,
+    "pairs": 250,
+    "parity": "exact",
+    "parity_policy": {
+      "atol": 0,
+      "mode": "exact",
+      "rtol": 0
+    },
+    "points_exact_images": 100,
+    "retained_points_exact_images": 100,
+    "score_exact_pairs": 250,
+    "scores_max_absolute_difference": 0.0,
+    "scores_max_relative_difference": 0.0,
+    "source_images_sha256_verified": 100,
+    "source_mapping_exact_images": 100,
+    "status_exact_pairs": 250
+  },
+  "execution_binding": "Original execution snapshots; no reassignment to the publication commit.",
+  "extraction": {
+    "blocked": 0,
+    "cache_hits": 0,
+    "failure": 0,
+    "fresh_extractions": 100,
+    "pending": 0,
+    "success": 250
+  },
+  "original_record_sha256": "503771d3a210ca7ebf3923561cc805aad617ad97013af189c78c52ea9fcb180d",
+  "schema": "fpl3-public-migration-summary-v1",
+  "verification_date": "2026-09-13"
+}
