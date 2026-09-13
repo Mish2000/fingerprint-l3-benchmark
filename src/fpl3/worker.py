@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 
 from .cache import cache_key, encode, read_cache, write_cache
+from .code_identity import check_code
 from .contracts import Image
 from .io import digest, fingerprint, read_json, verify_files, write_bytes, write_json
 from .worker_protocol import SCHEMA
@@ -119,11 +120,11 @@ def run_features(payload):
                                         for k in ("input_seconds", "detection_seconds", "description_seconds")},
                "comparison_seconds": sum(r["timings"]["comparison_seconds"] for r in results),
                "total_seconds": time.perf_counter() - started, "setup_error": error}
-    write_json(out / "summary.json", summary)
+    write_json(out / "worker-summary.json", summary)
     return summary
 
 
-def handle(request):
+def validate_request(request):
     if request.get("schema") != SCHEMA:
         raise ValueError("Unsupported worker protocol version")
     expected_id = fingerprint({k: v for k, v in request.items() if k != "request_id"})
@@ -131,6 +132,13 @@ def handle(request):
         raise ValueError("Worker request checksum changed")
     if Path(sys.prefix).resolve() != Path(request["expected_prefix"]).resolve():
         raise ValueError("Worker started in the wrong interpreter prefix")
+    if request["action"] not in {"doctor", "check-p1-numerics", "run-p1"}:
+        raise ValueError("Unknown worker action")
+    if request["action"] == "run-p1" and request["payload"]["signature"]["code"] != request["code"]:
+        raise ValueError("Worker request and run code signature differ")
+
+
+def handle(request):
     action, payload = request["action"], request["payload"]
     if action == "doctor":
         from .runtime import doctor, numerical_identity
@@ -141,7 +149,6 @@ def handle(request):
         return check_p1(payload["artifacts"], payload["output"])
     if action == "run-p1":
         return run_features(payload)
-    raise ValueError("Unknown worker action")
 
 
 def main():
@@ -152,7 +159,11 @@ def main():
     response = {"schema": SCHEMA, "request_id": request.get("request_id")}
     try:
         with contextlib.redirect_stdout(sys.stderr):
-            response.update(status="success", result=handle(request))
+            validate_request(request)
+            response["code_identity"] = {"before": check_code(request["code"])}
+            result = handle(request)
+            response["code_identity"]["after"] = check_code(request["code"])
+            response.update(status="success", result=result)
         code = 0
     except Exception as exc:
         response.update(status="failure", error=f"{type(exc).__name__}: {exc}")

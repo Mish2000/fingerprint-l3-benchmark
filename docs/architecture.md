@@ -20,9 +20,9 @@ opaque keys. Truth and subject identifiers stay in the reference protocol.
 
 `runner.py` validates configuration, snapshots source and dispatches a P1 job.
 `process.py` activates the configured Conda prefix and invokes `fpl3.worker` with
-a versioned file/JSON request, without a shell. The request is fingerprinted, the
-worker verifies its interpreter prefix, and the coordinator rejects a missing,
-stale or mismatched response. Logs are separate from JSON data. The worker's
+a `fpl3-worker-v2` file/JSON request, without a shell. The request is fingerprinted,
+the worker verifies its interpreter prefix and source closure, and the coordinator
+rejects a missing, stale or mismatched response. Logs are separate from JSON data. The worker's
 image/pair field allowlist rejects truth and duplicate bindings.
 
 `worker.py` verifies the historical numerical runtime and component closure,
@@ -30,6 +30,9 @@ checks each source image, extracts once per image and matches opaque pairs.
 Only that environment imports Torch and OpenCV during execution. `results.py`
 shares pair execution and coverage; `worker_protocol.py` shares the wire version.
 The worker does not import the coordinator, importer or protocol.
+`code_identity.py` checks each process's package files and loaded module paths
+before/after execution against the captured source signature. Source drift blocks
+approval. Hashes refer to actual file bytes and never to an unrelated Git HEAD.
 
 The worker and its small shared dependency closure retain Python 3.10-compatible
 syntax. Other modules and tests use the Python 3.13 development target. Ruff
@@ -66,7 +69,11 @@ points, retained points, descriptors and indices. Metadata validates payload
 hashes. Fresh inference bypasses reuse and preserves arrays before cache checks.
 
 `verification.py` compares arrays, statuses and scores with the reference without
-running a model or adjusting scores. Exact parity was fixed before comparison.
+running a model or adjusting scores. `run_state.py` separately checks the seal,
+reference/source bindings, coordinator status, request/response, recorded coverage,
+image metadata, worker summary and code/process evidence. `approved` requires both
+valid run evidence and exact fresh-extraction parity. `parity=exact` can remain a
+diagnostic on a rejected run. The CLI then exits with code 2.
 NPZ container hashes establish integrity; array equality establishes parity.
 `numerical.py` runs explicit synthetic model checks in the P1 worker. Default
 tests need no models, data or network. `dahia.py` performs explicit public artifact
@@ -80,8 +87,30 @@ blocks. Logical attempts and physical matcher calls are separate; an interrupted
 process can leave the physical count unknown. Shared extraction time is counted
 once, separately from matching and coordinator/process overhead.
 
-Files are written fully before atomic non-replacing publication. New run directories
-must not exist. `fpl3-run-v2` records coordinator and worker identities; a final
-`complete.json` binds artifacts and executed source snapshots. Old run formats and
-their original evidence remain intact. This is a bounded worker integration,
-without a general resume/retry or scheduling engine.
+The worker owns `pairs.json`, image records and `worker-summary.json`. The
+coordinator owns the authoritative `summary.json`, returned unchanged by `run-p1`.
+Its `run_status` is `success`, `blocked` or `infrastructure_failure`, independently
+of the recorded biometric outcomes. Missing pairs remain unrecorded; existing
+successes are not rewritten into blocked rows. If a process dies, physical calls
+can be unknown even when some pair outcomes are available.
+
+On Windows, a gated launcher is assigned to a
+[Job Object](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)
+before it can start Conda. Its descendants inherit the Job. Timeout or unexpected
+live descendants triggers tree termination; active-process accounting must reach
+zero before sealing. If quiescence cannot be confirmed, `finalized=false` and no
+`complete.json` is written. The Linux helper uses a process group and `/proc`
+confirmation; Windows remains the supported and verified benchmark platform.
+
+Files are fully written before atomic non-replacing publication. `fpl3-run-v3`
+records state and code checks. `complete.json` is only a file-inventory seal and
+can also close the evidence of a failed run. It does not authorize use. Every
+original output and failure record is retained. There is no implicit recovery,
+general resume/retry or scheduling engine.
+
+Existing v2 runs are inspected read-only using their original snapshot and
+request bindings, acknowledgements, coordinator error, counts and artifact hashes.
+Consistent evidence can return `passed_legacy_evidence`; absence of historical
+worker code attestation, final source-drift checks and explicit process-tree exit
+records is reported as a legacy limitation. These guarantees are not invented
+retroactively or inferred from today's checkout or interpreter versions.

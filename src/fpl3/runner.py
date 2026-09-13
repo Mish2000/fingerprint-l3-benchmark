@@ -8,10 +8,13 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .io import digest, read_json, snapshot, write_bytes, write_json
+from .code_identity import check_code, package_code
+from .io import digest, read_json, snapshot, verify_files, write_bytes, write_json
 from .protocol import load_import
 from .process import WorkerError, invoke_worker
 from .results import coverage, execute_pairs
+from .run_state import observe_outputs
+from .worker_protocol import SCHEMA
 
 
 def read_local(path):
@@ -70,49 +73,73 @@ def run_p1(local_path, run_dir, fresh=False):
     if digest(Path(local["third_party"]) / "components.json") != receipt["components_sha256"]:
         raise ValueError("Component lock changed")
     code_root = Path(__file__).parent
-    code_files = snapshot(code_root, list(code_root.glob("*.py")))
+    code_files = package_code()
+    code_before = check_code(code_files)
     for p in code_root.glob("*.py"):
         write_bytes(out / "code" / p.name, p.read_bytes())
+    verify_files(out / "code", code_files)
     write_json(out / "route.json", config)
-    error, numerical = None, None
+    error, numerical, quiescent = None, None, True
     try:
-        probe = invoke_worker(local, "doctor", {}, out / "worker/preflight")
+        probe = invoke_worker(local, "doctor", {}, out / "worker/preflight", expected_code=code_files)
         numerical = probe["numerical_identity"]
         if probe["environment"]["manager"] != "conda" or not probe["environment"]["isolated_packages"]:
             raise WorkerError("Worker preflight isolation failed")
     except WorkerError as exc:
-        error = str(exc)
+        error, quiescent = str(exc), exc.quiescent
     signature = {"config": config, "components": components, "environment": numerical, "code": code_files}
-    identity = {"schema": "fpl3-run-v2", "started_utc": datetime.now(timezone.utc).isoformat(),
+    identity = {"schema": "fpl3-run-v3", "started_utc": datetime.now(timezone.utc).isoformat(),
                 "route_id": config["route_id"], "historical_alias": "P1", "fresh_inference_requested": fresh,
                 "import_receipt_sha256": digest(Path(local["import_dir"]) / "receipt.json"),
                 "historical_identity_sha256": receipt["historical_identity_sha256"],
                 "local_config_sha256": digest(local_path), "signature": signature,
-                "coordinator_environment": environment, "worker_protocol": "fpl3-worker-v1",
+                "coordinator_environment": environment, "worker_protocol": SCHEMA,
                 "code_identity": "executed file bytes, no new Git commit"}
     write_json(out / "identity.json", identity)
     job = {"inputs": inputs, "pairs": pairs, "config": config, "components": components,
            "artifacts": local["third_party"], "cache_dir": local["cache_dir"], "run_dir": str(out),
            "signature": signature, "fresh": fresh, "expected_runtime": reference["runtimes"]["pore_python"]}
-    if not error:
+    launched = not error
+    acknowledgement = None
+    if launched:
         try:
-            summary = invoke_worker(local, "run-p1", job, out / "worker/execution")
+            acknowledgement = invoke_worker(local, "run-p1", job, out / "worker/execution", expected_code=code_files)
         except WorkerError as exc:
-            error = str(exc)
-    if error:
-        # A process-level failure is not 250 biometric rejections. If a worker
-        # died during matching, do not invent a precise physical call count.
-        results = execute_pairs(pairs, {}, {}, None, error)
-        if not (out / "pairs.json").exists():
-            write_json(out / "pairs.json", results)
-        summary = {**coverage(results), "images": len(inputs), "fresh_extractions": 0,
-                   "setup_error": error, "physical_calls_known": not (out / "worker/execution").exists()}
-        if not summary["physical_calls_known"]:
-            summary["matcher_invocations"] = None
-        if not (out / "summary.json").exists():
-            write_json(out / "summary.json", summary)
-        write_json(out / "process_failure.json", {"error": error})
+            error, quiescent = str(exc), exc.quiescent
+    code_after, code_error = None, None
+    try:
+        code_after = check_code(code_files)
+    except ValueError as exc:
+        code_error = str(exc)
+    write_json(out / "coordinator-code.json", {"before": code_before, "after": code_after, "error": code_error})
+    observed = observe_outputs(out, inputs, pairs)
+    errors = ([error] if error else []) + ([code_error] if code_error else [])
+    if launched:
+        errors.extend(observed["problems"])
+        if acknowledgement != observed["worker_summary"] or acknowledgement is None:
+            errors.append("Worker acknowledgement and saved outputs disagree")
+    setup_error = (observed["worker_summary"] or {}).get("setup_error")
+    if not launched or (setup_error and not errors):
+        run_status = "blocked"
+    else:
+        run_status = "infrastructure_failure" if errors else "success"
+    counts = observed["counts"]
+    summary = {**counts, "schema": "fpl3-run-status-v1", "run_status": run_status,
+               "evidence_eligible": run_status == "success", "errors": errors,
+               "setup_error": setup_error or (error if not launched else None), "finalized": quiescent,
+               "worker_summary_file": "worker-summary.json" if observed["worker_summary"] else None,
+               "matcher_invocations_recorded": counts["matcher_invocations"],
+               "physical_calls_known": not launched or (acknowledgement is not None and not errors)}
+    if not summary["physical_calls_known"]:
+        summary["matcher_invocations"] = None
+    if errors:
+        write_json(out / "process_failure.json", {"errors": errors, "tree_quiescent": quiescent})
+    # The worker never owns this file. Its original summary and every output stay intact.
+    write_json(out / "summary.json", summary)
     write_json(out / "coordinator.json", {"total_seconds": time.perf_counter() - started,
-                                          "worker_protocol": "fpl3-worker-v1", "error": error})
-    write_json(out / "complete.json", {"files": snapshot(out, [p for p in out.rglob("*") if p.is_file()])})
+               "worker_protocol": SCHEMA, "error": "; ".join(errors) or setup_error,
+               "run_status": run_status, "summary_sha256": digest(out / "summary.json")})
+    if quiescent:
+        write_json(out / "complete.json", {"schema": "fpl3-seal-v1", "meaning": "file_inventory_only",
+                   "files": snapshot(out, [p for p in out.rglob("*") if p.is_file()])})
     return summary

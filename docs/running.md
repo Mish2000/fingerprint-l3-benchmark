@@ -43,7 +43,7 @@ Configure IDEs to use `.conda/dev/python.exe` with Miniconda's Conda executable.
 Direct interpreter invocation may omit DLL search-path activation on Windows;
 use the supplied wrappers for reproducible numerical execution.
 
-`test.ps1` ran 42 synthetic tests and Ruff successfully. Tests need neither SD300,
+`test.ps1` ran 65 synthetic tests and Ruff successfully. Tests need neither SD300,
 models nor network. `doctor` reports interpreter, package paths, versions and
 isolation without inference or network. With local configuration it also launches
 a P1 worker to inspect that environment separately:
@@ -86,7 +86,8 @@ import and original receipts remain the evidence source.
 
 ## Actual-model checks and fresh P1
 
-These Conda commands were exercised. Their output destinations now exist:
+The original Conda migration exercised these command forms under v0.2. Their
+output destinations now exist and retain that execution's code identity:
 
 ```powershell
 .\scripts\fpl3.ps1 check-p1-numerics --local workspace\local.json --out workspace\review-conda-migration\p1-numerical-final.json
@@ -101,10 +102,27 @@ checks. The current cache is `workspace/cache-p1`; keys include worker numerical
 identity, model/component hashes and executed package bytes.
 
 The coordinator validates the frozen protocol under Python 3.13 and sends only
-opaque image records and pairs through `fpl3-worker-v1` to the Python 3.10 worker.
+opaque image records and pairs through `fpl3-worker-v2` to the Python 3.10 worker.
 Requests, responses, invocation arguments and source snapshots stay in the run.
 Truth and subject selection are not worker inputs. JSON data and console logs
 are separate. Missing or failed workers cause explicit infrastructure blocks.
+
+`run-p1` returns the coordinator's authoritative `summary.json`; raw worker
+accounting stays in `worker-summary.json`. Recorded pair outcomes remain intact
+on late failure. A sealed directory may represent failure: `complete.json` alone
+does not mean the run is eligible. `verify-migration` reports both `parity` and
+`approved`, and exits with code 2 when approval fails even if arrays are exact.
+
+For Step 01 closure, the original v2 run was rechecked without inference or source
+artifact modification, using this command (its new output now exists):
+
+```powershell
+.\scripts\fpl3.ps1 verify-migration --local workspace\local.json --run workspace\runs\p1-conda-03 --out workspace\review-step01-closure\revalidation-final
+```
+
+It passed the existing-evidence checks with `verification_status=passed_legacy_evidence`.
+The report explicitly retains the old format's missing worker-code and process-tree
+attestations. New v3 runs require those records. See [closure details](step01-closure.md).
 
 ## Dahia access audit
 

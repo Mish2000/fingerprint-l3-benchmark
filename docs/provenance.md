@@ -35,6 +35,14 @@ retain their own source snapshots and environment identity. Development Python
 Cleanup records hashes of removed redundant imports and superseded setup files;
 canonical reference artifacts, original runs and Dahia HTTP evidence are retained.
 
+The Step 01 closure correction changes finalization, process containment and
+verification only. The numerical adapters and original scientific artifacts are
+unchanged. New verification identifies the exact original run and the verifier's
+own file hashes separately. The supplied review probe reproduced the late-failure
+defect; regression tests assert the corrected approval contract, without preserving
+the defective behavior. Legacy missing code attestations remain explicit in the
+[closure report](step01-closure.md).
+
 ## Separate terms
 
 - Survey code: the local `LICENSE` was checked and copied with the closure. It

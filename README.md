@@ -23,17 +23,29 @@ version choice, exact package locks and upgrade procedure.
 On **2026-09-13**, fresh P1 execution through the Conda environments reproduced
 all **133,502 points, 100 descriptor arrays and 250 scores/statuses exactly**,
 including three valid zeros. The same 100 development images and 250 pairs were
-used; all features were extracted anew. **42 synthetic tests**, Ruff checks and
-separate actual-model geometry checks passed.
+used; all features were extracted anew. The Step 01 closure correction adds explicit
+run approval, process-tree termination and code identity checks. **65 synthetic
+tests** and Ruff passed; the earlier model geometry evidence is preserved.
+
+The original P1 run was revalidated **read-only**, with exact numerical parity and
+consistent coordinator/worker acknowledgements, coverage and source bindings.
+The result is `passed_legacy_evidence`: v2 did not record worker source checks at
+both ends of execution. That historical limit remains explicit. New v3 runs record
+those checks. See the [closure report](docs/step01-closure.md).
 
 The Dahia CNN detector and descriptor remain **access-blocked**: their public
 endpoints returned sign-in HTML or HTTP 401. Neither weight was obtained, loaded
 or run. See the single detailed [candidate status](docs/status.md), the original
 `workspace/review-step01/` evidence and the current
-`workspace/review-conda-migration/readout_he.md`. These detailed research records
+`workspace/review-step01-closure/readout_he.md`. These detailed research records
 remain private; [candidate status](docs/status.md) provides the public aggregate
 results. Source publication preserves the original execution snapshots and does
 not reassign those historical runs to a new commit.
+
+`AGENTS.md` is maintained locally and intentionally excluded from publication.
+Coding agents start at the project root and read it for the current brief, data
+boundaries and evidence locations. Public documentation provides the filtered
+review context; a missing public AGENTS file is expected.
 
 ## Quickstart
 

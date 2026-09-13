@@ -56,8 +56,8 @@ def main(argv=None):
         from .dahia import check_artifacts
         result = check_artifacts(args.source, args.out, args.network)
     print(json.dumps(result, indent=2, allow_nan=False))
-    if args.action == "run-p1" and result["success"] != result["planned"]:
+    if args.action == "run-p1" and (result.get("run_status") != "success" or result["success"] != result["planned"]):
         return 2
-    if args.action == "verify-migration" and result["parity"] != "exact":
+    if args.action == "verify-migration" and not result["approved"]:
         return 2
     return 0

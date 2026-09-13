@@ -8,7 +8,9 @@ from pathlib import Path
 import numpy as np
 
 from .contracts import MatchResult
-from .io import digest, read_json, verify_files, write_bytes, write_json
+from .code_identity import package_code
+from .io import digest, read_json, write_bytes, write_json
+from .run_state import assess_run
 from .protocol import load_import
 
 
@@ -35,29 +37,38 @@ def validate_score_row(row):
 
 
 def verify_migration(local_path, run_dir, out_dir):
-    local, run, out = read_json(local_path), Path(run_dir), Path(out_dir)
+    local, run, out = read_json(local_path), Path(run_dir).resolve(), Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     inputs, pairs, receipt = load_import(local["import_dir"])
     ref = Path(local["import_dir"]) / "reference"
-    verify_files(run, read_json(run / "complete.json")["files"])
+    evidence = assess_run(run, inputs, pairs, receipt, digest(Path(local["import_dir"]) / "receipt.json"))
     identity = read_json(run / "identity.json")
-    if identity["import_receipt_sha256"] != digest(Path(local["import_dir"]) / "receipt.json"):
-        raise ValueError("Reference receipt differs from executed run")
-    if identity["historical_identity_sha256"] != receipt["historical_identity_sha256"]:
-        raise ValueError("Reference historical identity differs")
     policy = identity["signature"]["config"]["parity_policy"]
     if policy != {"mode": "exact", "atol": 0, "rtol": 0}:
         raise ValueError("This migration verifier only implements predeclared exact parity")
-    new_rows = read_json(run / "pairs.json")
+    source_hashes = 0
+    for item in inputs:
+        try:
+            if digest(item["path"]) != item["sha256"]:
+                raise ValueError("Source image hash changed")
+            source_hashes += 1
+        except (OSError, ValueError) as exc:
+            evidence["problems"].append(f"Source {item['key']}: {exc}")
+            evidence["eligible"] = False
+    component_file = Path(local["third_party"]) / "components.json"
+    if digest(component_file) != receipt["components_sha256"] or read_json(component_file) != identity["signature"]["components"]:
+        evidence["eligible"] = False
+        evidence["problems"].append("Component manifest differs from reference/run")
+    observed = evidence.pop("observations") or {"rows": [], "images": [], "counts": {}, "worker_summary": None}
+    new_by_id = {r["pair_id"]: r for r in observed["rows"]} if evidence["integrity_verified"] else {}
     old_rows = list(csv.DictReader((ref / "P1/scores.csv").open(encoding="utf-8", newline="")))
-    if len(new_rows) != len(pairs) or len(old_rows) != len(pairs):
-        raise ValueError("Pair coverage mismatch")
+    if len(old_rows) != len(pairs):
+        raise ValueError("Reference pair coverage mismatch")
     comparisons = []
     score_abs, score_rel, statuses_equal, score_exact, old_zeros, new_zeros = 0., 0., 0, 0, 0, 0
-    for pair, old, new in zip(pairs, old_rows, new_rows):
-        if old["pair_id"] != pair["pair_id"] or any(new[k] != v for k, v in pair.items()):
-            raise ValueError("Reference/new pair order, identity or side differs")
-        validate_score_row(new)
+    for pair, old in zip(pairs, old_rows):
+        if old["pair_id"] != pair["pair_id"]:
+            raise ValueError("Reference pair order differs")
         old_score = float(old["score"]) if old["score"] else None
         if old["status"] == "success" and (old_score is None or not math.isfinite(old_score)):
             raise ValueError("Invalid successful reference score")
@@ -66,8 +77,8 @@ def verify_migration(local_path, run_dir, out_dir):
         raw = read_json(ref / f"P1/pairs/{pair['pair_id']}.json")
         if raw["score"] != old_score or raw["status"] != old["status"] or any(raw[k] != v for k, v in pair.items()):
             raise ValueError("Historical pair JSON and CSV disagree")
-        same_status = old["status"] == new["status"]
-        same_score = old_score == new["score"]
+        new = new_by_id.get(pair["pair_id"], {"status": "unrecorded", "score": None})
+        same_status, same_score = old["status"] == new["status"], old_score == new["score"]
         statuses_equal += same_status
         score_exact += same_score
         old_zeros += old_score == 0
@@ -80,27 +91,38 @@ def verify_migration(local_path, run_dir, out_dir):
                             "old_score": old_score, "new_score": new["score"], "difference": difference,
                             "status_equal": same_status, "score_exact": same_score})
     image_rows = []
+    new_images = {r["key"]: r for r in observed["images"]} if evidence["integrity_verified"] else {}
     for item in inputs:
         key = item["key"]
         old_detection = read_json(ref / f"P1/detections/{key}.json")
         old_description = read_json(ref / f"P1/templates/{key}.json")
-        new = read_json(run / f"templates/{key}.json")
+        new = new_images.get(key, {"status": "unrecorded"})
         row = {"key": key, "new_status": new["status"], "old_detection_status": old_detection["status"],
                "old_description_status": old_description["status"], "new_points": new.get("points"),
                "old_points": old_detection.get("pores"), "new_descriptors": new.get("descriptors"),
                "old_descriptors": old_description.get("descriptors"), "reference_arrays_available": False}
         paths = [ref / f"P1/detections/{key}.npz", ref / f"P1/templates/{key}.npz", run / f"templates/{key}.npz"]
         if all(p.exists() for p in paths) and new["status"] == "success":
-            row["reference_arrays_available"] = True
-            with np.load(paths[0], allow_pickle=False) as det, np.load(paths[1], allow_pickle=False) as desc, np.load(paths[2], allow_pickle=False) as fresh:
-                row["points"] = numeric_difference(det["points_xy"], fresh["source_points_xy"])
-                row["retained_points"] = numeric_difference(desc["points_xy"], fresh["points_xy"])
-                row["descriptors"] = numeric_difference(desc["descriptors"], fresh["descriptors"])
-                row["source_mapping_exact"] = bool(np.array_equal(fresh["source_indices"], np.arange(len(det["points_xy"])))
-                                                     and np.array_equal(det["points_xy"], desc["points_xy"]))
+            try:
+                with np.load(paths[0], allow_pickle=False) as det, np.load(paths[1], allow_pickle=False) as desc, np.load(paths[2], allow_pickle=False) as fresh:
+                    row["points"] = numeric_difference(det["points_xy"], fresh["source_points_xy"])
+                    row["retained_points"] = numeric_difference(desc["points_xy"], fresh["points_xy"])
+                    row["descriptors"] = numeric_difference(desc["descriptors"], fresh["descriptors"])
+                    row["source_mapping_exact"] = bool(np.array_equal(fresh["source_indices"], np.arange(len(det["points_xy"])))
+                                                         and np.array_equal(det["points_xy"], desc["points_xy"]))
+                    row["reference_arrays_available"] = True
+            except (OSError, ValueError, KeyError) as exc:
+                evidence["eligible"] = False
+                evidence["problems"].append(f"Array comparison {key}: {exc}")
         image_rows.append(row)
-    result = {"schema": "fpl3-migration-v1", "parity_policy": policy,
-              "input_and_pair_order_identity_roles": "exact", "source_images_sha256_verified": 100,
+    evidence["recorded_counts"] = observed["counts"]
+    try:
+        saved_summary = read_json(run / "summary.json")
+    except (OSError, ValueError):
+        saved_summary = None
+    result = {"schema": "fpl3-migration-v2", "parity_policy": policy, "evidence": evidence,
+              "input_and_pair_order_identity_roles": "exact" if len(new_by_id) == len(pairs) else "incomplete_or_invalid",
+              "source_images_sha256_verified": source_hashes,
               "images": len(inputs), "pairs": len(pairs), "status_exact_pairs": statuses_equal,
               "score_exact_pairs": score_exact, "scores_max_absolute_difference": score_abs,
               "scores_max_relative_difference": None if any(r["old_score"] == 0 and r["difference"] not in (None, 0) for r in comparisons) else score_rel,
@@ -114,13 +136,20 @@ def verify_migration(local_path, run_dir, out_dir):
               "new_total_points": sum(r["new_points"] or 0 for r in image_rows),
               "array_max_absolute_difference": {s: max((r.get(s, {}).get("max_absolute") or 0 for r in image_rows), default=0)
                                                   for s in ("points", "retained_points", "descriptors")},
-              "run": read_json(run / "summary.json"), "population": receipt["population"],
+              "run": saved_summary,
+              "population": receipt["population"],
               "historical_revision": receipt["historical_revision"], "historical_identity_sha256": receipt["historical_identity_sha256"],
               "import_receipt_sha256": identity["import_receipt_sha256"], "run_identity_sha256": digest(run / "identity.json"),
-              "components_sha256": receipt["components_sha256"], "biometric_accuracy_claim": False}
-    result["parity"] = "exact" if (statuses_equal == score_exact == 250 and all(result[k] == 100 for k in
-                           ("points_exact_images", "descriptors_exact_images", "retained_points_exact_images", "source_mapping_exact_images"))
-                           and result["run"]["fresh_extractions"] == 100) else "partial_or_mismatch"
+              "run_complete_sha256": digest(run / "complete.json") if (run / "complete.json").is_file() else None,
+              "components_sha256": receipt["components_sha256"], "biometric_accuracy_claim": False,
+              "verifier_code": package_code(), "original_run_modified": False, "model_inference_performed": False}
+    result["parity"] = "exact" if (statuses_equal == score_exact == len(pairs) and all(result[k] == len(inputs) for k in
+                           ("points_exact_images", "descriptors_exact_images", "retained_points_exact_images", "source_mapping_exact_images"))) else "partial_or_mismatch"
+    if not evidence["integrity_verified"]:
+        result["parity"] = "not_evaluated"
+    result["fresh_extraction_verified"] = observed["counts"].get("fresh_extractions") == len(inputs)
+    result["approved"] = evidence["eligible"] and result["parity"] == "exact" and result["fresh_extraction_verified"]
+    result["verification_status"] = ("passed_legacy_evidence" if evidence["limitations"] else "passed") if result["approved"] else "rejected"
     stream = io.StringIO(newline="")
     writer = csv.DictWriter(stream, fieldnames=list(comparisons[0]))
     writer.writeheader()

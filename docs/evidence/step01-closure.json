@@ -1,0 +1,142 @@
+{
+  "aggregate_results": {
+    "array_max_absolute_difference": {
+      "descriptors": 0,
+      "points": 0,
+      "retained_points": 0
+    },
+    "biometric_accuracy_claim": false,
+    "descriptors_exact_images": 100,
+    "fresh_extraction_verified": true,
+    "images": 100,
+    "input_and_pair_order_identity_roles": "exact",
+    "new_total_points": 133502,
+    "new_zero_scores": 3,
+    "old_total_points": 133502,
+    "old_zero_scores": 3,
+    "pairs": 250,
+    "points_exact_images": 100,
+    "retained_points_exact_images": 100,
+    "score_exact_pairs": 250,
+    "scores_max_absolute_difference": 0.0,
+    "scores_max_relative_difference": 0.0,
+    "source_images_sha256_verified": 100,
+    "source_mapping_exact_images": 100,
+    "status_exact_pairs": 250
+  },
+  "approval": {
+    "approved": true,
+    "parity": "exact",
+    "verification_status": "passed_legacy_evidence"
+  },
+  "checked_date": "2026-09-13",
+  "dahia": {
+    "access_status": "blocked_in_preserved_audit",
+    "audit_sha256": "aca60d2345e6cf7cc18d6882bb9b014922a6ec4afce3ab80ffe68fabbf550ad9",
+    "new_network_audit_performed": false,
+    "preserved_response_files_verified": 8,
+    "weights_loaded": false
+  },
+  "evidence_assurance": {
+    "code_assurance": "legacy_snapshot_and_request_only",
+    "eligible": true,
+    "integrity_verified": true,
+    "limitations": [
+      "v2 did not record worker code attestation, coordinator end drift or tree exit status; these cannot be proved retroactively"
+    ],
+    "problems": []
+  },
+  "local_agent_context": {
+    "exists": true,
+    "explicitly_read": true,
+    "intentionally_excluded_from_git": true
+  },
+  "new_revalidation": {
+    "comparison_csv_sha256": "782a17cd38854e933b9f53f6aa40c13bdd0ac6cc2de3ddaa699ab667639147fd",
+    "image_report_sha256": "a134d22990fd2b3813fb84d6a13fc71e6fd097ff99b29e9fb37d4b8ca868b19e",
+    "model_inference_performed": false,
+    "original_run_modified": false,
+    "summary_sha256": "7e30ce2c029e6f8fa4f1aa45a471c85fdf0fc60d4138c6b0e3935dadee230fdf",
+    "verifier_code": {
+      "__init__.py": "61060e13dc6ef70dceeec8c9850ca4805692907f7a27cd3dcc2f3064cc043565",
+      "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "_process_entry.py": "c7d0ed4a47d4b1e70cf89d089bc385f8dfc1bef0486e4ad92e10992539dc15b2",
+      "biometrics.py": "e5c494e32be6f5e510a1a741b2a7e0da336e23ca189a63e673a1b11fdba9489f",
+      "cache.py": "47432a991b28e78586c409cfabff27f058dab91629c894209f236263380a31be",
+      "cli.py": "fc958b2611115c65a19db69a809015b97004940037eb7d4f2ab0c7392422985f",
+      "code_identity.py": "945529117d0e847e7a2dad76a68031647522d074d2d6ebf052d124a013f0193a",
+      "contracts.py": "52e4d1034dde4aaed11ca61c8c569b4507e579d049b9d8bd40b167ce10006dec",
+      "dahia.py": "5a74dedf0eff459bf03ec3bff9d01d8f3dd8ab7ce8992e46ef99c729a1428665",
+      "importer.py": "6471ecc437b6b1b9e28b31cc5b7c541cb7201d4a3b05fe835016e1d64ca849cb",
+      "io.py": "e364ef8d00f9f92e045f76e74613697c5841ce533a6a57c90dc849dc7ea8f582",
+      "numerical.py": "90a2bf607ff3c36e46b19d5dfd04f01a86b9acca9f784cd7ca74508dbf23a017",
+      "process.py": "4039c66834b1fc0505c1e156b4cd21b856d6d0a0b5926ff46e3d3eecb11faab8",
+      "process_tree.py": "5054e53e38afbe69194302c6341bfe41adce9f4dbe204af6ae52950e3312a0a2",
+      "protocol.py": "e95785214fc7fccebc2f3323d4c4607aa97afe00050379f9d2500797f9a82e44",
+      "results.py": "290e58a1b682d51d00716349823d6f273cb16e5cb2edfd10fa462492c39c9e00",
+      "run_state.py": "27e7002a765e07bd0c4fe6d7a230a0ac7515f32ce94718a98ca599d51a1f3e0b",
+      "runner.py": "6dcf779dd39cbee28ef42d719d1e50535a82f860ec4e148370f6982617b0eca5",
+      "runtime.py": "92c68a2be5ca674b62c60d49242127a4a3e11407b5b616dc2e1e1b9affd404e6",
+      "verification.py": "5d2f5cb163e060885129129f14cf77addc6131ba83f4bb618266e3f3b26bad2a",
+      "worker.py": "13c1075972bdb06db0b1c27a1300b15c9ddd2f2c01cab2cf63e894e79c4d11a9",
+      "worker_protocol.py": "6753a7e57d2e903e89e27e43e7162ba57f05bd0634a7c45309fa70f967885f50"
+    }
+  },
+  "original_evidence": {
+    "components_sha256": "3b4a00cc5b342102bcc01a34529d43dca00014a7184d338dd164b0102c85c664",
+    "files_verified_unchanged": 434,
+    "historical_identity_sha256": "b2a62174f8f63e8bd5046a85c4dfdc74fce8394fce74c40b5c90ac20775a5668",
+    "historical_reports_unchanged": true,
+    "import_receipt_sha256": "507357ca6c22e8c626b9367ee4ded0c92c786d78f43527e283d2a8421e95a976",
+    "run_complete_sha256": "82e35cb703bf03d9bdc04a1d28fb2e182b4f04040579d7b9180b1a855a339c43",
+    "run_identity_sha256": "c0a397f6d9d5e198abed7d6200ebcce411c27b6972b9b28bcf54265841f995d5"
+  },
+  "package_version": "0.3.0",
+  "publication_filter": "Aggregate counts and hashes only; original detailed records remain local",
+  "recorded_counts": {
+    "blocked": 0,
+    "cache_hits": 0,
+    "extraction_attempts": 100,
+    "extraction_successes": 100,
+    "failure": 0,
+    "fresh_extractions": 100,
+    "images": 100,
+    "logical_attempts": 250,
+    "matcher_invocations": 250,
+    "pending": 0,
+    "planned": 250,
+    "recorded_images": 100,
+    "recorded_pairs": 250,
+    "success": 250,
+    "unrecorded_pairs": 0,
+    "zero_scores": 3
+  },
+  "review_scope": "Supplied source review and synthetic probe; no independent biometric rerun by reviewer",
+  "reviewed_commit": "c52d95e383232682eac7607c2967b2a56344a39f",
+  "schema": "fpl3-step01-closure-v1",
+  "scope": "Step 01 closure only; no new candidate, inference, training or population change",
+  "supplied_bundle_sha256": "3f478a1614a91278de27c0c8997f80528a8fe209a5cf0f49ee4e7483a2a6e823",
+  "supplied_review_sha256": "e7da371fe27e1a6b01a591383a6a4f89bb8aa4477d4b5634e77b685d5f8fc190",
+  "validation": {
+    "actual_conda_worker_probe": {
+      "code_before_after_matches_request_and_verifier": true,
+      "model_inference_performed": false,
+      "python": "3.10.21",
+      "returncode": 0,
+      "termination_method": "windows_job",
+      "tree_quiescent": true
+    },
+    "development_python": "3.13.15",
+    "junit_sha256": "590341aae2ad58390f2aa6b94627f04d1f7db0815bcc35469d83d0009efcd3c4",
+    "late_failure_contract": "Observed successes and exact diagnostic parity are preserved; run approval is rejected",
+    "platform": "Windows",
+    "process_tree_regression": "Real synthetic descendants stop writing after timeout or parent exit",
+    "ruff_passed": true,
+    "synthetic": {
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 65
+    }
+  }
+}

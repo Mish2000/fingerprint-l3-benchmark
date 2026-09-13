@@ -69,7 +69,7 @@ def test_stale_worker_response_rejected(monkeypatch, tmp_path):
         assert kwargs.get("shell", False) is False
         request = read_json(command[-1])
         write_json(request["response"], {"schema": SCHEMA, "request_id": "stale", "status": "success", "result": {}})
-        return subprocess.CompletedProcess(command, 0)
-    monkeypatch.setattr(process.subprocess, "run", fake_run)
+        return {"returncode": 0, "tree_quiescent": True, "timed_out": False, "error": None}
+    monkeypatch.setattr(process, "run_managed", fake_run)
     with pytest.raises(WorkerError, match="does not match"):
         invoke_worker(local, "doctor", {}, tmp_path / "dispatch")
