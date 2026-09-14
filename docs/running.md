@@ -192,3 +192,38 @@ rechecks original evidence without inference and exports Markdown, eligibility,
 an opaque CSV and a validation receipt. The private review additionally contains
 the verified Excel workbook and a local image demonstration; neither belongs in
 public Git. See the [Step 02 report](step02-supervisor.md).
+
+## Step 03 development comparison
+
+The separate `development-comparison` command supports only the two fixed
+development groups and the SIFT/DP32 compositions. It never executes the
+50-subject evaluation cohort. The historical P1 commands above remain strict.
+The completed destinations are immutable; any future authorized execution must
+use new output names.
+
+```powershell
+.\scripts\fpl3.ps1 development-comparison prepare --local workspace/local.json --specification workspace/step03-specification.json --out workspace/step03-freeze-new
+.\scripts\fpl3.ps1 development-comparison run --prepared workspace/step03-freeze-new --out workspace/runs/step03-new
+```
+
+Use `configs/development-comparison.example.json` as the portable specification
+shape. Its selected metadata must originate from the original ordered
+`l3_bridge_v1` twenty-subject manifest, with source SHA-256, geometry and all
+anatomical slots verified. Preparation requires the completed exact DP fixture
+gate, the supplied SIFT orientation probe in the existing P1 environment, passed
+synthetic tests, and approved independent a/b products from the historical
+five-subject development run. Missing source metadata is a blocker, not an
+invitation to select another population.
+
+Preparation seals route settings, protocol, code and provenance. Execution
+finishes DEV-CAL, saves and seals both separately named calibration profiles, and
+only then starts DEV-CHECK. All 900 negative attempts are retained; finite-score
+counts determine `floor(n/100)`, without SELF filtering. If there are no valid
+calibration scores, DEV-CHECK does not start. A process/source/cache fault prevents
+approval and leaves its original evidence in place.
+
+Reports preserve all 1,200 unique outcomes per route/group. The 100 ring negatives
+reference existing outcomes among the 900, while SELF-FILTERED views require both
+route/profile-specific SELF decisions and never select a new neighbor. Per-point
+reasons, retained source indices and explicitly verified reuse remain available
+with the private evidence. The new profiles do not replace the Step 02 policy.

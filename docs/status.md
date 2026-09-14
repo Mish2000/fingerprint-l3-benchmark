@@ -1,11 +1,13 @@
 # Candidate status
 
-This is the single detailed candidate status table. Last verified **2026-09-13**.
-Current P1 evidence is the [Step 02 supervisor report](step02-supervisor.md) and
-its [filtered aggregate](evidence/step02-supervisor.json). The private full report,
-workbook, protocol/decision freeze, source/template mappings, demonstration and
-2,000 individual outcomes remain in `workspace/review-step02-supervisor/` and
-the corresponding evaluation run. New evidence retains its executed source bytes.
+This is the single detailed candidate status table. Last verified **2026-09-14**.
+Step 03 completed the bounded two-route comparison on the original twenty
+development subjects; see its [report](step03-development.md) and
+[filtered aggregate](evidence/step03-development.json). Both calibration profiles
+preceded DEV-CHECK. The [Step 02 main P1 result](step02-supervisor.md) remains
+unchanged. DP has not been evaluated on the fifty-subject main cohort. Private
+manifests, source/point mappings, profiles, individual outcomes and the Hebrew
+review package remain under `workspace/review-step03-development/` and its run.
 
 The original Step 01 and Conda evidence remains unchanged. The
 [closure review](step01-closure.md) preserves exact migration parity and the
@@ -15,18 +17,19 @@ both-process source checks and quiescent worker trees. Development Conda Python
 
 | Candidate/component | Highest observed verification | Next-step condition |
 |---|---|---|
-| P1 / `ASM-F40-SIFT-SPATIAL` | Step 02: 50 subjects, 1,000 native SD300B images, 2,000 independently extracted a/b products and 2,000 validated pair outcomes; genuine ALL 282/500, next-subject FA ALL 50/500 at the frozen development threshold | Complete for this protocol; SELF-FILTERED denominators X=500, Y=500; no population FAR or superiority claim |
+| P1 / `ASM-F40-SIFT-SPATIAL` | Step 02: 50 subjects, 1,000 native SD300B images, 2,000 independently extracted a/b products and 2,000 validated pair outcomes; genuine ALL 282/500, next-subject FA ALL 50/500 at the frozen development threshold | Step 02 remains complete (X=500, Y=500); Step 03 adds a separately named development profile checked on ten other development subjects; no population FAR or superiority claim |
 | Dahia CNN descriptor | README link and static model definition checked; three public access variants redirected to sign-in HTML; `file/d/.../view` returned HTTP 401; no model payload, checkpoint inspection, loading or inference | Obtain an accessible artifact with known provenance before selecting a compatible isolated worker |
 | Dahia CNN detector | Same independently recorded access outcome; no model payload, checkpoint inspection, loading or inference | Same artifact requirement; a full-system smoke also requires a verified descriptor |
 | Survey f40 + learned Dahia descriptor | Not implemented or tested | Descriptor artifact and synthetic worker checks remain prerequisites |
 | `SYS-DAHIA-CNN-2018` full system | Source route inspected; not run | Both artifacts and their synthetic checks must succeed before the bounded two-pair smoke |
-| DP / PoreNet | Reserve candidates only | A future explicit research choice; no implementation started |
+| `ASM-F40-DP32-SPATIAL` | Step 03: 10 DEV-CAL + 10 DEV-CHECK subjects, 400 native source images, 2,400 pair outcomes; DEV-CHECK genuine ALL 46/100, ring FA 0/100, extended FA 10/900 at its preselected calibration profile | Development comparison complete; stop for review before any main-cohort evaluation; no superiority or population FAR claim |
+| PoreNet | Reserve candidate only; not implemented or run | Requires a future explicit research choice |
 
 For each Dahia model, response sizes, hashes, final URLs and check times are
 recorded separately. Those hashes describe HTML response bodies, **not weights**.
 The access outcome does not prove that a weight does not exist. No TensorFlow
 environment was created without a model payload. Neither full Dahia nor a
-descriptor-only composition is ready for the next comparison on this evidence.
+learned-descriptor-only composition is ready for the next comparison on this evidence.
 
 ## Migration evidence
 
@@ -39,7 +42,7 @@ descriptor-only composition is ready for the next comparison on this evidence.
   details, including dtype/shape and relative differences, are retained locally.
 - CPU, four Torch threads, Python 3.10.21 and the historical numerical package
   versions. Fresh extraction for all images; zero reference-cache reuse.
-- Step 01 closure had 65 tests; Step 02 has 83. Coverage includes invalid
+- Step 01 closure had 65 tests; Step 02 had 83; Step 03 has 111. Coverage includes invalid
   acknowledgements, code mismatch/drift and real descendant termination. Ruff
   passed. Existing model-level synthetic evidence is preserved.
 

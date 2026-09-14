@@ -55,6 +55,27 @@ filesystem handling at the adapter boundary without changing numerical processin
 
 ## Separate terms
 
+Step 03 adds a DP32 adapter derived from `dp_descriptors` and
+`compute_orientation` in the same pinned Dahia `utils.py` at
+`b3c46518f2fba4937902b5e56093177c01474de9`. Its attribution and CC BY-NC-SA 4.0
+terms apply to the derived operations in `direct_pore.py`.
+The original [copyright and license notice](../licenses/dahia-dp32.txt) is retained
+for these derived operations; it does not assign a blanket project license.
+Local changes expose point-to-descriptor mappings and invalid-point reasons, validate integral
+coordinates, precompute the unchanged circular mask, and evaluate orientation
+only where its original Gaussian support is consumed. The original point-border
+inequalities, patch size 32, input float32 [0,1], Sobel and reduction order,
+Gaussian filtering, affine rotation and normalization are preserved. Finite
+outputs were compared with zero numerical tolerance against the original code;
+the original zero-norm NaN becomes an explicit per-point exclusion.
+
+`ASM-F40-DP32-SPATIAL` is a local composition using Survey's learned detector,
+this classical descriptor and Dahia's unchanged spatial matcher. It is not the
+complete external DP system and does not inherit paper accuracy claims. It
+requires neither the blocked Dahia weights nor TensorFlow. SIFT's historical
+median/CLAHE preparation is not added to DP. Known-angle SIFT diagnostics remain
+synthetic controls and are not an additional experimental fingerprint route.
+
 - Survey code: the local `LICENSE` was checked and copied with the closure. It
   states MIT and credits Azim Ibragimov (2022).
 - Dahia code: the checked local license states **CC BY-NC-SA 4.0**, with credits

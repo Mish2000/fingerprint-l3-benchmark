@@ -15,6 +15,7 @@ from pathlib import Path
 import numpy as np
 
 from .contracts import Descriptors, Points
+from .direct_pore import DahiaDP32
 
 
 def tiled_survey(model, image, output_tile=256):
@@ -125,7 +126,8 @@ class DahiaSpatial:
                                            thr=self.parameters["ratio_threshold_on_squared_distance"]))
 
 
-FACTORIES = {"survey_f40": SurveyF40, "dahia_sift": DahiaSift, "dahia_spatial": DahiaSpatial}
+FACTORIES = {"survey_f40": SurveyF40, "dahia_sift": DahiaSift, "dahia_dp32": DahiaDP32,
+             "dahia_spatial": DahiaSpatial}
 
 
 def build_route(config, artifacts):

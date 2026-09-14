@@ -79,7 +79,10 @@ def _check_exchange(run, phase, identity, problems, modern):
             or response.get("schema") != schema or response.get("request_id") != expected_id
             or response.get("status") != "success" or not isinstance(response.get("result"), dict)):
         problems.append(f"{phase}: invalid or unsuccessful worker acknowledgement")
-    if request.get("action") != ("doctor" if phase == "preflight" else "run-p1"):
+    action = identity.get("worker_action", "run-p1")
+    if action not in {"run-p1", "run-development-route"}:
+        problems.append("Unknown declared worker action")
+    if request.get("action") != ("doctor" if phase == "preflight" else action):
         problems.append(f"{phase}: incorrect worker action")
     if Path(request.get("response", "")).resolve() != (folder / "response.json").resolve():
         problems.append(f"{phase}: response destination differs")

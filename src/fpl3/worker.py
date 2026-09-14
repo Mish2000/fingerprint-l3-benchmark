@@ -32,9 +32,23 @@ def validate_opaque_job(payload):
         raise ValueError("Worker pair references unknown input")
 
 
-def run_features(payload):
+def validate_development_job(payload):
+    if "reuse" not in payload or not isinstance(payload["reuse"], dict):
+        raise ValueError("Development job requires explicit reuse mapping")
+    validate_opaque_job({k: v for k, v in payload.items() if k not in {"reuse", "diagnostic_pairs"}})
+    if set(payload["reuse"]) - {r["key"] for r in payload["inputs"]}:
+        raise ValueError("Reuse refers to an unplanned input")
+    if payload["config"]["route_id"] not in {"ASM-F40-SIFT-SPATIAL", "ASM-F40-DP32-SPATIAL"}:
+        raise ValueError("Only the two Step 03 routes are supported")
+    if payload["fresh"] is not True:
+        raise ValueError("Development uses explicit approved reuse, not implicit cache lookup")
+    if not isinstance(payload.get("diagnostic_pairs"), list) or set(payload["diagnostic_pairs"]) - {p["pair_id"] for p in payload["pairs"]}:
+        raise ValueError("Diagnostic pairs must reference the fixed opaque pair list")
+
+
+def run_features(payload, development=False):
     from .runtime import doctor, numerical_identity
-    validate_opaque_job(payload)
+    (validate_development_job if development else validate_opaque_job)(payload)
     started = time.perf_counter()
     inputs, pairs, config = payload["inputs"], payload["pairs"], payload["config"]
     out, signature, fresh = Path(payload["run_dir"]), payload["signature"], payload["fresh"]
@@ -81,15 +95,29 @@ def run_features(payload):
                 key = cache_key(image, signature)
                 record["cache_key"] = key
                 stage = "cache"
+                reuse = payload.get("reuse", {}).get(image.key)
                 features = None if fresh else read_cache(local["cache_dir"], key, image)
+                reused_points = None
+                if reuse is not None:
+                    from .feature_reuse import load_reused
+                    reused_points, reused_described = load_reused(reuse, image, signature)
+                    record["reuse"] = reuse
+                    if reused_described is not None:
+                        features = reused_points, reused_described
                 if features is None:
                     mark, stage = time.perf_counter(), "detection"
-                    points = detector.detect(image, pixels, out / "scratch" / image.key)
+                    points = reused_points if reused_points is not None else detector.detect(image, pixels, out / "scratch" / image.key)
                     points.validate(image)
+                    if development:
+                        record.update(detector_invoked=reused_points is None, descriptor_invoked=True,
+                                      points_reused=reused_points is not None)
                     record["timings"]["detection_seconds"] = time.perf_counter() - mark
                     mark, stage = time.perf_counter(), "description"
                     described = descriptor.describe(image, pixels, points)
                     described.validate(points, image)
+                    if development:
+                        record["point_filtering"] = getattr(descriptor, "filter_details", [
+                            {"source_index": j, "reason": None} for j in range(len(points.xy))])
                     record["timings"]["description_seconds"] = time.perf_counter() - mark
                     # Persist fresh arrays before cache validation, retaining discrepancies.
                     write_bytes(out / "templates" / f"{image.key}.npz", encode(points, described))
@@ -98,6 +126,9 @@ def run_features(payload):
                 else:
                     points, described = features
                     record["cache_hit"] = True
+                    if development:
+                        record.update(detector_invoked=False, descriptor_invoked=False, points_reused=True,
+                                      point_filtering=[{"source_index": j, "reason": None} for j in range(len(points.xy))])
                     write_bytes(out / "templates" / f"{image.key}.npz", encode(points, described))
                 templates[image.key] = described
                 record.update(status="success", reason=None, failure_stage=None,
@@ -113,6 +144,22 @@ def run_features(payload):
         print(f"image {i + 1}/{len(inputs)} {record['status']}", file=sys.stderr, flush=True)
     results = execute_pairs(pairs, templates, extraction, matcher, error)
     write_json(out / "pairs.json", results)
+    if development:
+        diagnostics = []
+        for row in results:
+            if row["pair_id"] not in payload["diagnostic_pairs"]:
+                continue
+            item = {"pair_id": row["pair_id"], "status": row["status"], "score": row["score"],
+                    "score_origin": "same recorded matcher outcome; no second spatial call"}
+            if row["status"] == "success":
+                left, right = templates[row["left"]], templates[row["right"]]
+                item["correspondences"] = (len(matcher.matching.utils.find_correspondences(
+                    left.values, right.values, thr=config["parameters"]["ratio_threshold_on_squared_distance"]))
+                    if len(left.values) and len(right.values) else 0)
+                item["products"] = {side: {k: extraction[row[side]][k] for k in
+                                          ("key", "points", "descriptors", "npz_sha256")} for side in ("left", "right")}
+            diagnostics.append(item)
+        write_json(out / "diagnostics.json", diagnostics)
     summary = {**coverage(results), "images": len(inputs),
                "extraction_attempts": sum(r["status"] != "blocked" for r in extraction.values()),
                "extraction_successes": sum(r["status"] == "success" for r in extraction.values()),
@@ -135,9 +182,9 @@ def validate_request(request):
         raise ValueError("Worker request checksum changed")
     if Path(sys.prefix).resolve() != Path(request["expected_prefix"]).resolve():
         raise ValueError("Worker started in the wrong interpreter prefix")
-    if request["action"] not in {"doctor", "check-p1-numerics", "run-p1"}:
+    if request["action"] not in {"doctor", "check-p1-numerics", "run-p1", "run-development-route"}:
         raise ValueError("Unknown worker action")
-    if request["action"] == "run-p1" and request["payload"]["signature"]["code"] != request["code"]:
+    if request["action"] in {"run-p1", "run-development-route"} and request["payload"]["signature"]["code"] != request["code"]:
         raise ValueError("Worker request and run code signature differ")
 
 
@@ -152,6 +199,8 @@ def handle(request):
         return check_p1(payload["artifacts"], payload["output"])
     if action == "run-p1":
         return run_features(payload)
+    if action == "run-development-route":
+        return run_features(payload, development=True)
 
 
 def main():

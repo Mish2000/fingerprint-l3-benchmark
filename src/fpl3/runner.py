@@ -60,6 +60,16 @@ def run_bound_p1(local_path, run_dir, inputs, pairs, receipt, *, fresh=True, exp
     Protocol/decision bindings belong to the coordinator identity, never the job.
     The historical migration entry point above retains its frozen 250-pair plan.
     """
+    return _run_bound_route(local_path, run_dir, inputs, pairs, receipt, fresh=fresh, experiment=experiment)
+
+
+def run_development_route(local_path, run_dir, inputs, pairs, receipt, *, experiment, reuse, diagnostic_pairs=()):
+    return _run_bound_route(local_path, run_dir, inputs, pairs, receipt, fresh=True,
+                            experiment=experiment, reuse=reuse, development=True, diagnostic_pairs=diagnostic_pairs)
+
+
+def _run_bound_route(local_path, run_dir, inputs, pairs, receipt, *, fresh, experiment=None,
+                     reuse=None, development=False, diagnostic_pairs=()):
     from .runtime import doctor
     started = time.perf_counter()
     local = read_local(local_path)
@@ -67,10 +77,18 @@ def run_bound_p1(local_path, run_dir, inputs, pairs, receipt, *, fresh=True, exp
     reference = read_json(Path(local["import_dir"]) / "reference/settings.json")
     historical = {**reference["P1"], **{k: reference["shared_descriptor_matcher"][k]
                   for k in ("sift_scale", "median_blur", "clahe_clip", "ratio_threshold_on_squared_distance")}}
-    if config["parameters"] != historical or config["route_id"] != "ASM-F40-SIFT-SPATIAL":
-        raise ValueError("P1 numerical behavior differs from imported settings")
-    if [config[s] for s in ("detector", "descriptor", "matcher")] != ["survey_f40", "dahia_sift", "dahia_spatial"]:
-        raise ValueError("This CLI command is restricted to historical P1")
+    if development:
+        from .development_protocol import dp_config
+        original = read_json(local["p1_route_config"])
+        if (original["parameters"] != historical or original["route_id"] != "ASM-F40-SIFT-SPATIAL"
+                or [original[s] for s in ("detector", "descriptor", "matcher")] !=
+                ["survey_f40", "dahia_sift", "dahia_spatial"] or config not in (original, dp_config(original))):
+            raise ValueError("Step 03 route differs from the fixed two-route configuration")
+    else:
+        if config["parameters"] != historical or config["route_id"] != "ASM-F40-SIFT-SPATIAL":
+            raise ValueError("P1 numerical behavior differs from imported settings")
+        if [config[s] for s in ("detector", "descriptor", "matcher")] != ["survey_f40", "dahia_sift", "dahia_spatial"]:
+            raise ValueError("This CLI command is restricted to historical P1")
     environment = doctor("dev")
     if environment["manager"] != "conda" or not environment["isolated_packages"] or environment["enable_user_site"]:
         raise ValueError("Development coordinator must run in its isolated Conda environment")
@@ -110,15 +128,22 @@ def run_bound_p1(local_path, run_dir, inputs, pairs, receipt, *, fresh=True, exp
                 "code_identity": "executed file bytes, no new Git commit"}
     if experiment is not None:
         identity["experiment"] = experiment
+    if development:
+        identity.update(worker_action="run-development-route", historical_alias=None,
+                        reuse_policy="explicit approved source-bound P1 products; no score reuse")
     write_json(out / "identity.json", identity)
     job = {"inputs": inputs, "pairs": pairs, "config": config, "components": components,
            "artifacts": local["third_party"], "cache_dir": local["cache_dir"], "run_dir": str(out),
            "signature": signature, "fresh": fresh, "expected_runtime": reference["runtimes"]["pore_python"]}
+    if development:
+        job["reuse"] = reuse
+        job["diagnostic_pairs"] = list(diagnostic_pairs)
     launched = not error
     acknowledgement = None
     if launched:
         try:
-            acknowledgement = invoke_worker(local, "run-p1", job, out / "worker/execution", expected_code=code_files)
+            acknowledgement = invoke_worker(local, "run-development-route" if development else "run-p1",
+                                            job, out / "worker/execution", expected_code=code_files)
         except WorkerError as exc:
             error, quiescent = str(exc), exc.quiescent
     code_after, code_error = None, None

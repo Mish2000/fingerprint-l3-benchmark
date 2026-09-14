@@ -9,40 +9,40 @@ produces a raw similarity score or an explicit failure from two images.
 ```text
 Two native gray8 images (1000 PPI)
   → Survey FCN f40 → stitched heatmap → global NMS → predicted pore points
-  → SIFT descriptions at those points → spatial matching → score / failure
+  → SIFT or DP32 descriptions at those points → spatial matching → score / failure
 ```
 
 ## Current verified state
 
-Step 02 is complete: **50 existing evaluation subjects, 1,000 native SD300B
-images and 2,000 P1 comparisons** passed evidence validation. The fixed decision
-rule was selected beforehand from the 200 approved development impostor scores.
-The [six-section supervisor report](docs/step02-supervisor.md) presents SELF,
-metadata joins, genuine matching and cyclic next-subject matching, each with its
-required ALL/SELF-FILTERED view and explicit denominator.
+Step 03 is complete: **20 original development subjects, 400 native SD300B
+images and 4,800 unique comparisons** across P1 and a DP32 composition. The
+original first ten subjects calibrated the two profiles; the last ten checked
+those fixed profiles. Both profiles were sealed before DEV-CHECK started.
 
-At that fixed threshold, genuine ALL matched **282/500**,
-and next-subject ALL produced **50/500 false acceptances**.
-The report separates these results from processing failures, development data
-and population-risk claims. It distinguishes supervisor-source statements from
-current implementation choices.
+| Route | DEV-CHECK genuine ALL | Ring false acceptances | Extended false acceptances |
+|---|---:|---:|---:|
+| P1 / SIFT | 64/100 | 1/100 | 28/900 |
+| DP32 composition | 46/100 | 0/100 | 10/900 |
 
-Development uses Conda Python **3.13.15**; P1 uses a separate Conda Python
-**3.10.21** worker with unchanged numerical dependencies, CPU and four Torch
-threads. New runs require before/after source checks, complete acknowledgements,
-validated outputs and confirmed process-tree termination. **83 synthetic tests
-and Ruff passed.** See [environment policy](docs/environment-policy.md).
+The [development report](docs/step03-development.md) includes calibration,
+SELF-filtered denominators, component checks and limitations. These are fixed
+development sample results, not population FAR or a ranking by genuine acceptance
+alone. The 100 ring negatives reference the same outcomes among the 900 extended
+negatives; filtered views add no matcher calls.
 
-[Step 01 closure](docs/step01-closure.md) remains intact, including exact
-100-image/250-pair migration parity and the original v2 attestation limitations.
-Its scientific snapshots were preserved. Dahia weights remain access-blocked;
-DP/PoreNet and P2 were not started. The single detailed
-[candidate table](docs/status.md) records current verification.
+The [Step 02 main result](docs/step02-supervisor.md) remains **282/500 genuine
+matches and 50/500 false acceptances** at its original threshold. Step 03 did not
+run DP or apply new thresholds on the main fifty-subject cohort.
 
-Research images, templates, models, individual scores and the detailed Hebrew
-review remain private under ignored `workspace/`. Public reports are filtered
-aggregates. Local `AGENTS.md` provides current agent context and is intentionally
-excluded from publication.
+**111 synthetic tests and Ruff passed.** Development Conda Python 3.13.15 and
+the separate P1 Python 3.10.21 numerical environment are unchanged. New runs
+require source checks, acknowledgements and confirmed process-tree termination.
+See [environment policy](docs/environment-policy.md), the [Step 01 closure](docs/step01-closure.md)
+and the single [candidate table](docs/status.md).
+
+Images, templates, weights, individual scores and detailed Hebrew review packages
+remain private under ignored `workspace/`. Public documentation contains filtered
+aggregates. Local operational notes are excluded from publication.
 
 ## Quickstart
 
@@ -75,7 +75,7 @@ local. See the [integration workflow](CONTRIBUTING.md) for contribution policy.
 |---|---|
 | `src/fpl3/` | Protocol, contracts, coordinator, model worker and verification |
 | `tests/` | Synthetic contracts, population, cache, component-swap and process tests |
-| `configs/` | Portable P1 parameters and local configuration examples |
+| `configs/` | Fixed P1/DP32 parameters and portable configuration examples |
 | `environments/` | Conda profile declarations and Windows package locks |
 | `scripts/` | PowerShell bootstrap, CLI and test entry points |
 | `docs/` | Environment policy, architecture, research context and provenance |
@@ -90,13 +90,15 @@ with SIFT and spatial matching from the identified
 The engineering contribution is the independent composition, explicit contracts,
 environment separation, provenance and migration verification. It builds on the
 user's earlier P1 experiment and does not claim a new biometric algorithm.
+The DP32 composition adds the mirror's classical Direct Pore descriptor
+with recorded point filtering and verified source equivalence.
 
 Migration results do not establish biometric accuracy, comparative superiority
 or anatomical confirmation of predicted pores. SD300 contains scanned ink cards;
 SD300B/C are related scans. Step 02 evaluated only the explicitly authorized
 fixed SD300B cohort after freezing its development decision policy. Historical
-exposure remains recorded. Further methods, training and resolutions remain
-outside this completed task.
+exposure remains recorded. Step 03 stopped after its two development groups. Further evaluation, training
+and resolutions require a new research decision.
 
 Code, weights and data have separate terms. Survey code carries MIT; the Dahia
 mirror carries CC BY-NC-SA 4.0. No blanket license was assigned to this combined

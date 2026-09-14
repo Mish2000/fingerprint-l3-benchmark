@@ -148,3 +148,39 @@ revalidates the run read-only before exporting six sections and an opaque table.
 ALL and SELF-FILTERED are views of the same scores. Negative filtering checks both
 units on the fixed ring and never finds a replacement survivor. Decisions and
 eligibility never flow back into biometric components.
+
+## Development comparison
+
+`development_protocol.py` extends the existing ordered supervisor populations
+only for Step 03. It splits the original twenty selected development subjects
+into DEV-CAL and DEV-CHECK, retaining the original five at the start. Each group
+has 1,200 unique comparisons. Its 100 ring pair IDs explicitly reference a subset
+of the same 900 directed same-finger impostor outcomes; reporting never repeats
+those matcher calls. There are no cross-group pairs.
+
+`development.py` freezes both route configurations, source code, metadata,
+component checks and environment. The first fixed finger partition is a
+feasibility batch and is not repeated. Remaining finger partitions use at most
+four existing workers. After DEV-CAL finishes, each route gets a separately named
+profile selected only from all score-bearing DEV-CAL impostors, with budget
+`floor(n/100)`. Both profiles are sealed before DEV-CHECK starts. No evaluation
+cohort run or threshold adjustment is part of this command.
+
+`direct_pore.py` provides the fixed DP32 descriptor, preserving the original
+asymmetric border rule, float32 [0,1] input, patch normalization and row order.
+Every omitted point has an explicit reason and retained `source_indices` remain
+aligned. The sparse orientation implementation evaluates the original reductions
+only in neighborhoods needed by the queried points; exact equivalence is checked
+against the pinned author code before research comparisons.
+
+`feature_reuse.py` reads explicitly approved P1 products with content, image,
+replica, numerical environment, component and detector-setting bindings. The
+coordinator checks source runs and AST equivalence of the unchanged P1 adapter
+functions. Each DP a/b product uses the corresponding independently produced f40
+points from P1. Descriptor reuse additionally requires the identical route; a
+point-only import does not reuse the previous descriptor. There is no implicit
+general-purpose cache compatibility policy.
+
+The new worker action retains the existing v3 run evidence and process boundary.
+Subjects, group labels, truth and thresholds remain in the coordinator. The
+historical P1 and migration entry points retain their strict original settings.

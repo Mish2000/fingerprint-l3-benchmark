@@ -1,0 +1,12 @@
+{
+  "brief": "workspace/instructions/step03-development_he.md",
+  "metadata": "workspace/review-step03-development/development-metadata.json",
+  "dp_fixtures": "workspace/review-step03-development/dp-fixtures.json",
+  "sift_probe": "workspace/review-step03-development/sift-orientation-p1.json",
+  "synthetic_validation": "workspace/review-step03-development/tests-freeze.xml",
+  "step02_prepared": "workspace/review-step02-supervisor/frozen-final",
+  "step02_local": "workspace/review-step02-supervisor/local.json",
+  "reuse_run": "workspace/runs/p1-supervisor-dev-02",
+  "cache_dir": "workspace/cache-step03-development",
+  "data_root": "PATH_TO_AUTHORIZED_NIST_ROOT"
+}

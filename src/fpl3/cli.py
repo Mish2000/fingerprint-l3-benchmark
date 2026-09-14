@@ -38,6 +38,12 @@ def main(argv=None):
     supervisor.add_argument("--role", choices=("development", "evaluation"))
     supervisor.add_argument("--development-run")
     supervisor.add_argument("--run")
+    development = sub.add_parser("development-comparison", help="Step 03 only: fixed DEV-CAL and DEV-CHECK")
+    development.add_argument("phase", choices=("prepare", "run"))
+    development.add_argument("--out", required=True)
+    development.add_argument("--local")
+    development.add_argument("--specification")
+    development.add_argument("--prepared")
     args = parser.parse_args(argv)
     if args.action == "doctor":
         from .runtime import doctor
@@ -76,6 +82,16 @@ def main(argv=None):
             if not args.prepared or not args.run:
                 parser.error("report requires --prepared and --run")
             result = write_report(args.prepared, args.local, args.run, args.out)
+    elif args.action == "development-comparison":
+        from .development import prepare_comparison, run_comparison
+        if args.phase == "prepare":
+            if not args.local or not args.specification:
+                parser.error("prepare requires --local and --specification")
+            result = prepare_comparison(args.local, args.specification, args.out)
+        else:
+            if not args.prepared:
+                parser.error("run requires --prepared")
+            result = run_comparison(args.prepared, args.out)
     else:
         from .dahia import check_artifacts
         result = check_artifacts(args.source, args.out, args.network)

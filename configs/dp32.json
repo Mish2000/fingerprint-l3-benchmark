@@ -1,0 +1,15 @@
+{
+  "route_id": "ASM-F40-DP32-SPATIAL",
+  "detector": "survey_f40",
+  "descriptor": "dahia_dp32",
+  "matcher": "dahia_spatial",
+  "parameters": {
+    "device": "cpu", "features": 40, "input_overlap": 16,
+    "nms_iou": 0.2, "nms_probability": 0.65, "output_tile": 256,
+    "torch_threads": 4, "window": 17,
+    "dp_patch_size": 32, "dp_pixels": "float32_0_1",
+    "dp_orientation": "sparse-exact-v1",
+    "ratio_threshold_on_squared_distance": 0.7
+  },
+  "descriptor_equivalence": {"mode": "exact", "atol": 0, "rtol": 0}
+}

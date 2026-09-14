@@ -1,0 +1,516 @@
+{
+  "development_subjects": 20,
+  "historical_step02": {
+    "genuine_all": [
+      282,
+      500
+    ],
+    "next_subject_false_accepts_all": [
+      50,
+      500
+    ],
+    "threshold": 1.8128025490006117,
+    "unchanged": true
+  },
+  "limitations": [
+    "development samples with historical exposure",
+    "shared images and subjects; comparisons are not independent",
+    "not population FAR or comparative superiority",
+    "no DP evaluation on the fifty-subject main cohort"
+  ],
+  "new_evaluation_comparisons": 0,
+  "schema": "fpl3-step03-public-v1",
+  "source_and_processing_ppi": 1000,
+  "source_baseline": "60145aa025e587aafff558b35c0c28abd7e65722",
+  "source_images": 400,
+  "split": "original first ten DEV-CAL; original last ten DEV-CHECK",
+  "summaries": {
+    "DEV-CAL-dp32": {
+      "X": 100,
+      "Y": 100,
+      "calibration_attempts": 900,
+      "calibration_budget": 9,
+      "calibration_false_accepts": 9,
+      "calibration_scores": 900,
+      "counts": {
+        "descriptor_calls": 400,
+        "descriptors": 519084,
+        "detector_calls": 0,
+        "images": 400,
+        "matcher_calls": 1200,
+        "point_exclusions": 9266,
+        "reused_descriptors": 0,
+        "reused_points": 400,
+        "source_points": 528350
+      },
+      "extended_impostors": [
+        {
+          "MATCH": 9,
+          "NON_MATCH": 891,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 9,
+          "NON_MATCH": 891,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "SELF_FILTERED"
+        }
+      ],
+      "group": "DEV-CAL",
+      "point_exclusions_by_reason": {
+        "source_border_policy": 9266
+      },
+      "products": 400,
+      "route_id": "ASM-F40-DP32-SPATIAL",
+      "source_images": 200,
+      "successful_products": 400,
+      "threshold": 1.0898890514099095,
+      "views": [
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "roll_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 22,
+          "NON_MATCH": 78,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.22,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 22,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 22,
+          "NON_MATCH": 78,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.22,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 22,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        },
+        {
+          "MATCH": 0,
+          "NON_MATCH": 100,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.0,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 0,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 0,
+          "NON_MATCH": 100,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.0,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 0,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        }
+      ]
+    },
+    "DEV-CAL-sift": {
+      "X": 100,
+      "Y": 100,
+      "calibration_attempts": 900,
+      "calibration_budget": 9,
+      "calibration_false_accepts": 9,
+      "calibration_scores": 900,
+      "counts": {
+        "descriptor_calls": 200,
+        "descriptors": 528350,
+        "detector_calls": 200,
+        "images": 400,
+        "matcher_calls": 1200,
+        "point_exclusions": 0,
+        "reused_descriptors": 200,
+        "reused_points": 200,
+        "source_points": 528350
+      },
+      "extended_impostors": [
+        {
+          "MATCH": 9,
+          "NON_MATCH": 891,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 9,
+          "NON_MATCH": 891,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "SELF_FILTERED"
+        }
+      ],
+      "group": "DEV-CAL",
+      "point_exclusions_by_reason": {},
+      "products": 400,
+      "route_id": "ASM-F40-SIFT-SPATIAL",
+      "source_images": 200,
+      "successful_products": 400,
+      "threshold": 2.695395178305679,
+      "views": [
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "roll_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 43,
+          "NON_MATCH": 57,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.43,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 43,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 43,
+          "NON_MATCH": 57,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.43,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 43,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        },
+        {
+          "MATCH": 2,
+          "NON_MATCH": 98,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.02,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 2,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 2,
+          "NON_MATCH": 98,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.02,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 2,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        }
+      ]
+    },
+    "DEV-CHECK-dp32": {
+      "X": 100,
+      "Y": 100,
+      "calibration_attempts": 900,
+      "calibration_budget": 9,
+      "calibration_false_accepts": 9,
+      "calibration_scores": 900,
+      "counts": {
+        "descriptor_calls": 400,
+        "descriptors": 587858,
+        "detector_calls": 0,
+        "images": 400,
+        "matcher_calls": 1200,
+        "point_exclusions": 9738,
+        "reused_descriptors": 0,
+        "reused_points": 400,
+        "source_points": 597596
+      },
+      "extended_impostors": [
+        {
+          "MATCH": 10,
+          "NON_MATCH": 890,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 10,
+          "NON_MATCH": 890,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "SELF_FILTERED"
+        }
+      ],
+      "group": "DEV-CHECK",
+      "point_exclusions_by_reason": {
+        "source_border_policy": 9738
+      },
+      "products": 400,
+      "route_id": "ASM-F40-DP32-SPATIAL",
+      "source_images": 200,
+      "successful_products": 400,
+      "threshold": 1.0898890514099095,
+      "views": [
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "roll_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 46,
+          "NON_MATCH": 54,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.46,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 46,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 46,
+          "NON_MATCH": 54,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.46,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 46,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        },
+        {
+          "MATCH": 0,
+          "NON_MATCH": 100,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.0,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 0,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 0,
+          "NON_MATCH": 100,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.0,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 0,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        }
+      ]
+    },
+    "DEV-CHECK-sift": {
+      "X": 100,
+      "Y": 100,
+      "calibration_attempts": 900,
+      "calibration_budget": 9,
+      "calibration_false_accepts": 9,
+      "calibration_scores": 900,
+      "counts": {
+        "descriptor_calls": 400,
+        "descriptors": 597596,
+        "detector_calls": 400,
+        "images": 400,
+        "matcher_calls": 1200,
+        "point_exclusions": 0,
+        "reused_descriptors": 0,
+        "reused_points": 0,
+        "source_points": 597596
+      },
+      "extended_impostors": [
+        {
+          "MATCH": 28,
+          "NON_MATCH": 872,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 28,
+          "NON_MATCH": 872,
+          "PROCESSING_FAILURE": 0,
+          "attempt_denominator": 900,
+          "score_denominator": 900,
+          "view": "SELF_FILTERED"
+        }
+      ],
+      "group": "DEV-CHECK",
+      "point_exclusions_by_reason": {},
+      "products": 400,
+      "route_id": "ASM-F40-SIFT-SPATIAL",
+      "source_images": 200,
+      "successful_products": 400,
+      "threshold": 2.695395178305679,
+      "views": [
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 100,
+          "NON_MATCH": 0,
+          "PROCESSING_FAILURE": 0,
+          "kind": "roll_self",
+          "rate": 1.0,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 100,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 64,
+          "NON_MATCH": 36,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.64,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 64,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 64,
+          "NON_MATCH": 36,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_mated",
+          "rate": 0.64,
+          "rate_denominator": 100,
+          "rate_meaning": "match",
+          "rate_numerator": 64,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        },
+        {
+          "MATCH": 1,
+          "NON_MATCH": 99,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.01,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 1,
+          "total": 100,
+          "view": "ALL"
+        },
+        {
+          "MATCH": 1,
+          "NON_MATCH": 99,
+          "PROCESSING_FAILURE": 0,
+          "kind": "plain_roll_next_subject_non_mated",
+          "rate": 0.01,
+          "rate_denominator": 100,
+          "rate_meaning": "false acceptance",
+          "rate_numerator": 1,
+          "total": 100,
+          "view": "SELF_FILTERED"
+        }
+      ]
+    }
+  },
+  "unique_pair_outcomes": 4800,
+  "validation": {
+    "exact_dp_fixtures": "passed",
+    "historical_files_unchanged": 21473,
+    "ruff": "passed",
+    "step01_overlapping_scores_exact": 250,
+    "step02_development_overlapping_scores_exact": 200,
+    "synthetic_tests": 111
+  },
+  "version": "0.5.0",
+  "wall_seconds": 5383.6313943
+}
