@@ -6,6 +6,15 @@ Research infrastructure for comparing fingerprint verification routes that use
 **Level-3 information with learned pore detection**, on source images of at least 1000 PPI. A route
 produces a raw similarity score or an explicit failure from two images.
 
+**Current research home.** This repository is the entry point for continuing
+Level-3 work. The latest authorized development step is complete; its findings
+and limits are recorded below.
+
+The [research project map](docs/research-projects.md) connects this work to the
+[completed 500 PPI benchmark](https://github.com/Mish2000/fingerprint-benchmark),
+[pore-localization ML/CV case study](https://github.com/Mish2000/fingerprint-new-method),
+and [software workbench](https://github.com/Mish2000/fingerprint-research).
+
 ```text
 Two native gray8 images (1000 PPI)
   → Survey FCN f40 → stitched heatmap → global NMS → predicted pore points
