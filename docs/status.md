@@ -1,5 +1,8 @@
 # Candidate status
 
+Historical SD300B results. Current SD302 work and the five-project overview are
+in [fingerprint-level3-recognition-research](https://github.com/Mish2000/fingerprint-level3-recognition-research/blob/main/docs/research-projects.md).
+
 This is the single detailed candidate status table. Last verified **2026-09-14**.
 Step 03 completed the bounded two-route comparison on the original twenty
 development subjects; see its [report](step03-development.md) and

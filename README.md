@@ -6,14 +6,13 @@ Research infrastructure for comparing fingerprint verification routes that use
 **Level-3 information with learned pore detection**, on source images of at least 1000 PPI. A route
 produces a raw similarity score or an explicit failure from two images.
 
-**Current research home.** This repository is the entry point for continuing
-Level-3 work. The latest authorized development step is complete; its findings
-and limits are recorded below.
+**Historical SD300B study.** This repository preserves the completed Level-3
+experiments and their execution evidence. Current research on native 1000 ppi
+SD302 images, including the learned pore descriptor and improved verification
+results, is in
+[fingerprint-level3-recognition-research](https://github.com/Mish2000/fingerprint-level3-recognition-research).
 
-The [research project map](docs/research-projects.md) connects this work to the
-[completed 500 PPI benchmark](https://github.com/Mish2000/fingerprint-benchmark),
-[pore-localization ML/CV case study](https://github.com/Mish2000/fingerprint-new-method),
-and [software workbench](https://github.com/Mish2000/fingerprint-research).
+**[Research overview: results, contributions and all five projects](https://github.com/Mish2000/fingerprint-level3-recognition-research/blob/main/docs/research-projects.md)**
 
 ```text
 Two native gray8 images (1000 PPI)
@@ -21,7 +20,7 @@ Two native gray8 images (1000 PPI)
   → SIFT or DP32 descriptions at those points → spatial matching → score / failure
 ```
 
-## Current verified state
+## Last completed study
 
 Step 03 is complete: **20 original development subjects, 400 native SD300B
 images and 4,800 unique comparisons** across P1 and a DP32 composition. The
